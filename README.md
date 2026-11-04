@@ -1,1 +1,1 @@
-# LilCat
+Lil Companion is a cute, interactive pixel-art cat that lives on your browser! 🐈 It wanders around your screen, reacts to your clicks, gets sleepy when bored, wears headphones while you listen to music, and shows adorable emotions. Customize its name, appearance, and size to make it your own little browsing buddy. 🧡
