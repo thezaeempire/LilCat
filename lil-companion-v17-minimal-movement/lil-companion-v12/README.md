@@ -9,7 +9,7 @@ A tiny pixel-art cat that lives in your browser. It wanders around webpages, rea
 4. Click **Load unpacked**.
 5. Select the `lil-companion-v12` folder — the one containing `manifest.json`.
 
-## Secret Easter egg
+The secret Emo Cat now has its own idle, dizzy, music, typing, sad, angry and sleeping artwork.\n\n## Secret Easter egg
 Open the extension popup and enter the Konami code:
 
 `↑ ↑ ↓ ↓ ← → ← → B A`

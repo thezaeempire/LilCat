@@ -47,7 +47,14 @@
         "assets/cats/cream.png",
         "assets/cats/black.png",
         "assets/cats/white.png",
-        "assets/cats/emo.png"
+        "assets/cats/emo.png",
+        "assets/effects/ground-impact.png",
+        "assets/cats/emo-dizzy.png",
+        "assets/cats/emo-music.png",
+        "assets/cats/emo-typing.png",
+        "assets/cats/emo-sad.png",
+        "assets/cats/emo-angry.png",
+        "assets/cats/emo-sleep.png"
       ],
       "matches": [
         "<all_urls>"
