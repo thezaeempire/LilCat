@@ -1,15 +1,15 @@
 (() => {
-  if (window.__lilCompanionV6) return;
-  window.__lilCompanionV6 = true;
+  if (window.__lilCompanionV7) return;
+  window.__lilCompanionV7 = true;
   if (!document.documentElement) return;
 
   const defaults = {enabled:true, variant:"orange"};
   chrome.storage.local.get({...defaults, catName:"Mochi", wanderEnabled:true, petScale:64}, cfg => {
     if (!cfg.enabled || document.getElementById("lil-companion-host")) return;
-    mount(cfg.variant || "orange", cfg.catName || "Mochi");
+    mount(cfg.variant || "orange", cfg.catName || "Mochi", cfg.bubbleScale || 1);
   });
 
-  function mount(initialVariant, initialName) {
+  function mount(initialVariant, initialName, initialBubbleScale) {
     const host=document.createElement("div");
     host.id="lil-companion-host";
     host.style.cssText="all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;";
@@ -32,10 +32,14 @@
       .pet.dizzy .sprite{animation:dizzy .7s ease-in-out infinite}
       .pet.sleep .sprite{animation:sleep 2.4s ease-in-out infinite}
       .pet.drag .sprite{animation:dragWobble .2s ease-in-out infinite alternate}
-      .bubble{position:absolute;left:50%;bottom:calc(100% - 2px);transform:translateX(-50%);padding:6px 9px;border:2px solid #9c5a2d;border-radius:12px 12px 12px 3px;background:#fff8e9;color:#3d291b;font:700 11px/1.2 system-ui,sans-serif;white-space:nowrap;opacity:0;transition:opacity .16s;pointer-events:none}
+      .bubble{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);padding:calc(7px * var(--bubble-scale,1)) calc(11px * var(--bubble-scale,1));border:2px solid #9c5a2d;border-radius:13px;background:#fff8e9;color:#3d291b;font:800 calc(12px * var(--bubble-scale,1))/1.25 system-ui,sans-serif;white-space:nowrap;max-width:260px;opacity:0;transition:opacity .16s;pointer-events:none;filter:drop-shadow(0 2px 2px #0002)}
+      .bubble:before{content:"";position:absolute;left:calc(50% - 7px);bottom:-10px;border-width:9px 8px 0 8px;border-style:solid;border-color:#9c5a2d transparent transparent transparent}
+      .bubble:after{content:"";position:absolute;left:calc(50% - 6px);bottom:-7px;border-width:7px 6px 0 6px;border-style:solid;border-color:#fff8e9 transparent transparent transparent}
+      .bubble.show{opacity:1}
       .bubble.show{opacity:1}
       .accessory{position:absolute;opacity:0;pointer-events:none;user-select:none}
-      .headphones{top:0px;left:32px;font:28px system-ui;filter:drop-shadow(0 1px 1px white)}
+      .pet.music .sprite{width:124px;height:106px;left:-30px;top:-24px;object-fit:contain;opacity:1}
+      .pet.sleep .sprite{animation:sleep 2.4s ease-in-out infinite}
       .keyboard{display:none}
       .pet.music .headphones{opacity:1}
       .pet.is-typing .keyboard{opacity:1;animation:keyTap .22s infinite alternate}
@@ -61,18 +65,20 @@
     root.appendChild(css);
     const pet=document.createElement("div");
     pet.className="pet idle";
-    pet.innerHTML=`<div class="bubble"></div><img class="sprite" draggable="false" alt="Pixel cat"><span class="tailfx">〰</span><span class="accessory headphones">🎧</span>`;
+    pet.innerHTML=`<div class="bubble"></div><img class="sprite" draggable="false" alt="Pixel cat"><span class="tailfx">〰</span>`;
     root.appendChild(pet);
     const img=pet.querySelector(".sprite"),bubble=pet.querySelector(".bubble");
-    const assets={orange:"cat-orange.png",sad:"sad.png",angry:"angry.png",happy:"happy.png",love:"love.png",dizzy:"dizzy.png",typing:"typing.png"};
+    const assets={orange:"cat-orange.png",sad:"sad.png",angry:"angry.png",happy:"happy.png",love:"love.png",dizzy:"dizzy.png",typing:"typing.png",sleep:"sleep.png",music:"headphones.png"};
     let variant=initialVariant, x=Math.max(8,innerWidth-82), y=Math.max(8,innerHeight-64);
     let targetX=x, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
-    let lastThink=performance.now(), nextWalk=performance.now()+1600, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64;
+    let lastThink=performance.now(), nextWalk=performance.now()+1600, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false;
+    pet.style.setProperty("--bubble-scale",bubbleScale);
     pet.dataset.variant=variant;
     const say=(t,ms=2000)=>{bubble.textContent=t;bubble.classList.add("show");clearTimeout(say.timer);say.timer=setTimeout(()=>bubble.classList.remove("show"),ms)};
     function assetFor(state){
       if(state==="typing") return "typing";
-      if(state==="angry"||state==="sad"||state==="dizzy"||state==="happy"||state==="love") return state;
+      if(state==="music") return "music";
+      if(state==="angry"||state==="sad"||state==="dizzy"||state==="happy"||state==="love"||state==="sleep") return state;
       return variant;
     }
     function updateImage(state="idle"){
@@ -100,19 +106,23 @@
     }
     function loop(now){
       const dt=Math.min(40,now-lastThink);lastThink=now;
+      if(mode==="idle"&&!sleeping&&!dragging&&!audioPlaying&&!pet.classList.contains("is-typing")&&now-lastInteraction>28000){
+        sleeping=true;setMode("sleep");say("Zzz... 💤",2600);
+      }
       if(mode==="walk"&&!dragging&&!pet.classList.contains("is-typing")&&!audioPlaying){
         const dx=targetX-x,step=Math.sign(dx)*Math.min(Math.abs(dx),dt*.075);
         x+=step;y=innerHeight-64;place();
         if(Math.abs(dx)<2){setMode("idle");nextWalk=now+1800+Math.random()*4200;if(Math.random()<.22)say(["just vibing ✨","meow!","nice website","hmm..."][Math.floor(Math.random()*4)]);
           if(Math.random()<.07){setMode("sad");say("a little lonely... 🥺");setTimeout(()=>{if(mode==="sad")setMode("idle");},1700);}}
       }
-      if(now>nextWalk&&mode==="idle"&&!dragging&&!physicsActive&&wanderEnabled&&!pet.classList.contains("is-typing")&&!audioPlaying)wander();
+      if(now>nextWalk&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&wanderEnabled&&!pet.classList.contains("is-typing")&&!audioPlaying)wander();
       requestAnimationFrame(loop);
     }
     let dragStartedAt=0, maxLift=0, gotAirborne=false, suppressNextClick=false;
     let previousPointer=null, releaseVX=0, releaseVY=0, physicsActive=false, dizzyTimer=null, pointerStart=null, didDrag=false;
     const floorY=()=>Math.max(0,innerHeight-petScale);
     pet.addEventListener("pointerdown",e=>{
+      lastInteraction=performance.now();sleeping=false;
       dragging=true;physicsActive=false;dragStartedAt=performance.now();maxLift=0;gotAirborne=false;didDrag=false;
       pointerStart={x:e.clientX,y:e.clientY};
       previousPointer={x:e.clientX,y:e.clientY,t:performance.now()};
@@ -178,13 +188,22 @@
     let clickTimes=[];
     pet.addEventListener("click",()=>{
       if(dragging||suppressNextClick)return;
-      const now=performance.now();
-      clickTimes=clickTimes.filter(t=>now-t<2200);clickTimes.push(now);
-      setMode("angry");say(clickTimes.length>1?"STOP POKING ME!! 😾":"HEY! THAT TICKLES! 😾");
-      clearTimeout(pet.angerTimer);
-      pet.angerTimer=setTimeout(()=>{if(!dragging&&mode==="angry")setMode("idle");},clickTimes.length>2?3000:1800);
+      const now=performance.now();lastInteraction=now;sleeping=false;
+      clickTimes=clickTimes.filter(t=>now-t<1800);clickTimes.push(now);
+      if(clickTimes.length>=3){
+        setMode("angry");say("STOP POKING ME!! 😾");
+        clearTimeout(pet.angerTimer);
+        pet.angerTimer=setTimeout(()=>{if(!dragging&&mode==="angry")setMode("idle");},2600);
+        clickTimes=[];
+      } else {
+        setMode("love");say(clickTimes.length===1?"purrrrr ❤️":"MORE PETS PLEASE! 💕");
+        clearTimeout(pet.loveTimer);
+        pet.loveTimer=setTimeout(()=>{if(!dragging&&mode==="love")setMode("idle");},1700);
+      }
     });
     function onTyping(e){
+      lastInteraction=performance.now();sleeping=false;
+      if(mode==="sleep")setMode("idle");
       if(e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
       const el=e.target;
       if(!el)return;
@@ -203,8 +222,8 @@
     function mediaCheck(){
       const active=[...document.querySelectorAll("audio,video")].some(m=>!m.paused&&!m.ended&&m.readyState>=2);
       if(active!==audioPlaying){
-        audioPlaying=active;pet.classList.toggle("music",active);
-        if(active){pet.classList.remove("is-typing");setMode("idle");pet.classList.add("music");}
+        audioPlaying=active;
+        if(active){lastInteraction=performance.now();sleeping=false;pet.classList.remove("is-typing");setMode("music");pet.classList.add("music");}
         else {pet.classList.remove("music");setMode("idle");}
       }
     }
@@ -219,6 +238,7 @@
       if(changes.catName){catName=changes.catName.newValue||"Mochi";}
       if(changes.wanderEnabled){wanderEnabled=!!changes.wanderEnabled.newValue;}
       if(changes.petScale){petScale=Number(changes.petScale.newValue)||64;pet.style.width=petScale+"px";pet.style.height=petScale+"px";place();}
+      if(changes.bubbleScale){bubbleScale=Number(changes.bubbleScale.newValue)||1;pet.style.setProperty("--bubble-scale",bubbleScale);}
       if(changes.enabled&&changes.enabled.newValue===false)host.remove();
     });
     updateImage("idle");place();requestAnimationFrame(loop);

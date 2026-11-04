@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lil Companion \u2014 Pixel Pet",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "A tiny pixel cat that reacts while you browse, type and listen to music.",
   "permissions": [
     "storage"
@@ -36,7 +36,9 @@
         "happy.png",
         "love.png",
         "dizzy.png",
-        "typing.png"
+        "typing.png",
+        "headphones.png",
+        "sleep.png"
       ],
       "matches": [
         "<all_urls>"
