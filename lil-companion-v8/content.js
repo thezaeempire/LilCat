@@ -157,6 +157,16 @@
         releaseVX*=Math.pow(.985,dt);
         if(x<0){x=0;releaseVX=Math.abs(releaseVX)*.55;}
         if(x>innerWidth-petScale){x=innerWidth-petScale;releaseVX=-Math.abs(releaseVX)*.55;}
+        // Ceiling collision: bounce downward immediately instead of clamping at y=0.
+        if(y<=0){
+          y=0;
+          if(releaseVY<0){
+            releaseVY=Math.max(2.2,Math.abs(releaseVY)*.62);
+            releaseVX*=.88;
+            bounces++;
+            if(Math.abs(releaseVY)>4){setMode("dizzy");say("BONK! 😵",900);}
+          }
+        }
         if(y>=floorY()){
           y=floorY();
           if(Math.abs(releaseVY)>2.1 && bounces<5){
