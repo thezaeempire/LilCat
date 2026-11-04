@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "Lil Companion \u2014 Pixel Pet",
+  "version": "12.0.0",
+  "description": "A tiny pixel cat companion with moods, chats and a secret emo mode.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "Lil Companion",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/content.js"
+      ],
+      "css": [
+        "src/pet.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/cats/cat-orange.png",
+        "assets/cats/sad.png",
+        "assets/cats/angry.png",
+        "assets/cats/happy.png",
+        "assets/cats/love.png",
+        "assets/cats/dizzy.png",
+        "assets/cats/typing.png",
+        "assets/cats/headphones.png",
+        "assets/cats/sleep.png",
+        "assets/cats/street.png",
+        "assets/cats/cream.png",
+        "assets/cats/black.png",
+        "assets/cats/white.png",
+        "assets/cats/emo.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  }
+}

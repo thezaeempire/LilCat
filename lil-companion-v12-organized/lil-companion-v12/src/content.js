@@ -31,6 +31,18 @@
       .pet.angry .sprite{animation:angryShake .13s linear infinite alternate}
       .pet.dizzy .sprite{animation:dizzy .7s ease-in-out infinite}
       .pet.sleep .sprite{animation:sleep 2.4s ease-in-out infinite}
+      .pet.emo .sprite{filter:drop-shadow(0 0 5px #b36b9b88);animation:emoFloat 3.1s ease-in-out infinite}
+      .pet.emo.walk .sprite{animation:emoWalk .48s ease-in-out infinite alternate}
+      .pet.emo.happy .sprite{animation:emoHop .6s ease-in-out 2}
+      .pet.emo.angry .sprite{animation:emoGlitch .16s steps(2) infinite}
+      .pet.emo.drag .sprite{animation:emoDrag .24s ease-in-out infinite alternate}
+      .pet.emo .bubble{background:#211923;color:#f5d9e9;border-color:#bd789f;border-radius:5px;font-family:Georgia,serif;font-style:italic;letter-spacing:.2px;box-shadow:0 0 12px #bd789f33}
+      .pet.emo .bubble:before{border-top-color:#bd789f}.pet.emo .bubble:after{border-top-color:#211923}
+      @keyframes emoFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4px) rotate(1deg)}}
+      @keyframes emoWalk{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-4px) rotate(2deg)}}
+      @keyframes emoHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px) rotate(-3deg)}}
+      @keyframes emoGlitch{0%{transform:translateX(-1px)}50%{transform:translateX(2px) skewX(2deg)}100%{transform:translateX(0)}}
+      @keyframes emoDrag{to{transform:rotate(-8deg) translateY(-2px)}}
       .pet.drag .sprite{animation:dragWobble .2s ease-in-out infinite alternate}
       .bubble{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);padding:calc(7px * var(--bubble-scale,1)) calc(11px * var(--bubble-scale,1));border:2px solid #9c5a2d;border-radius:13px;background:#fff8e9;color:#3d291b;font:800 calc(12px * var(--bubble-scale,1))/1.25 system-ui,sans-serif;white-space:nowrap;max-width:260px;opacity:0;transition:opacity .16s;pointer-events:none;filter:drop-shadow(0 2px 2px #0002)}
       .bubble:before{content:"";position:absolute;left:calc(50% - 7px);bottom:-10px;border-width:9px 8px 0 8px;border-style:solid;border-color:#9c5a2d transparent transparent transparent}
@@ -40,15 +52,24 @@
       .accessory{position:absolute;opacity:0;pointer-events:none;user-select:none}
       .pet.music .sprite{width:124px;height:106px;left:-30px;top:-24px;object-fit:contain;opacity:1}
       .pet.sleep .sprite{animation:sleep 2.4s ease-in-out infinite}
+      .pet.emo .sprite{filter:drop-shadow(0 0 5px #b36b9b88);animation:emoFloat 3.1s ease-in-out infinite}
+      .pet.emo.walk .sprite{animation:emoWalk .48s ease-in-out infinite alternate}
+      .pet.emo.happy .sprite{animation:emoHop .6s ease-in-out 2}
+      .pet.emo.angry .sprite{animation:emoGlitch .16s steps(2) infinite}
+      .pet.emo.drag .sprite{animation:emoDrag .24s ease-in-out infinite alternate}
+      .pet.emo .bubble{background:#211923;color:#f5d9e9;border-color:#bd789f;border-radius:5px;font-family:Georgia,serif;font-style:italic;letter-spacing:.2px;box-shadow:0 0 12px #bd789f33}
+      .pet.emo .bubble:before{border-top-color:#bd789f}.pet.emo .bubble:after{border-top-color:#211923}
+      @keyframes emoFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-4px) rotate(1deg)}}
+      @keyframes emoWalk{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-4px) rotate(2deg)}}
+      @keyframes emoHop{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px) rotate(-3deg)}}
+      @keyframes emoGlitch{0%{transform:translateX(-1px)}50%{transform:translateX(2px) skewX(2deg)}100%{transform:translateX(0)}}
+      @keyframes emoDrag{to{transform:rotate(-8deg) translateY(-2px)}}
       .keyboard{display:none}
       .pet.music .headphones{opacity:1}
       .pet.is-typing .keyboard{opacity:1;animation:keyTap .22s infinite alternate}
       .pet.is-typing .sprite{animation:typeBob .22s infinite alternate}
       .pet.music .sprite{animation:musicBob .65s ease-in-out infinite alternate}
       .pet.is-typing.music .sprite{animation:typeBob .22s infinite alternate}
-      .pet .tailfx{position:absolute;right:4px;bottom:17px;font:20px system-ui;opacity:0;animation:tail 1.1s ease-in-out infinite;pointer-events:none}
-      .pet.idle .tailfx,.pet.happy .tailfx{opacity:1}
-      .pet.typing .tailfx,.pet.is-typing .tailfx{opacity:1}
       @keyframes breathe{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-3px) scaleY(1.025)}}
       @keyframes walk{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-7px) rotate(3deg)}}
       @keyframes typeBob{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
@@ -60,22 +81,25 @@
       @keyframes dragWobble{to{transform:rotate(9deg)}}
       @keyframes keyTap{to{transform:translateX(-50%) translateY(2px) scale(.95)}}
       @keyframes musicBob{to{transform:translateY(-5px) rotate(4deg)}}
-      @keyframes tail{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(20deg)}}
     `;
     root.appendChild(css);
     const pet=document.createElement("div");
     pet.className="pet idle";
-    pet.innerHTML=`<div class="bubble"></div><img class="sprite" draggable="false" alt="Pixel cat"><span class="tailfx">〰</span>`;
+    pet.innerHTML=`<div class="bubble"></div><img class="sprite" draggable="false" alt="Pixel cat">`;
     root.appendChild(pet);
     const img=pet.querySelector(".sprite"),bubble=pet.querySelector(".bubble");
-    const assets={orange:"cat-orange.png",sad:"sad.png",angry:"angry.png",happy:"happy.png",love:"love.png",dizzy:"dizzy.png",typing:"typing.png",sleep:"sleep.png",music:"headphones.png"};
+    const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png"};
     let variant=initialVariant, x=Math.max(8,innerWidth-82), y=Math.max(8,innerHeight-64);
     let targetX=x, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
-    let lastThink=performance.now(), nextWalk=performance.now()+1600, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false;
+    let lastThink=performance.now(), nextWalk=performance.now()+1600, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false;
     pet.style.setProperty("--bubble-scale",bubbleScale);
-    pet.dataset.variant=variant;
-    const say=(t,ms=2000)=>{bubble.textContent=t;bubble.classList.add("show");clearTimeout(say.timer);say.timer=setTimeout(()=>bubble.classList.remove("show"),ms)};
+    pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");
+    const chats={normal:["meow! 🐾","you got this!","need a tiny break?","i'm supervising 👀","this page is ours now","pspsps...","remember to stretch!","i believe in you ✨","one more tab? really?","tiny paws, big plans"],pet:["purrrrr ❤️","best human ever","again again!! 💕","that tickles!"],emo:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...","whatever.","i'm fine. (not really)","the void is calling 🖤","don't talk to me before my playlist","it's not a phase.","sad songs hit harder at 2am","brb staring out the window","everything is temporary. even this tab.","🖤 🥀 🖤"],emoPet:["...okay, that was kinda nice.","don't tell anyone i liked that.","🖤","you can stay, i guess."]};
+    const pick=a=>a[Math.floor(Math.random()*a.length)];
+    const say=(t,ms=2400)=>{bubble.textContent=t;bubble.classList.add("show");clearTimeout(say.timer);say.timer=setTimeout(()=>bubble.classList.remove("show"),ms)};
+    const chat=(kind="normal")=>say(pick(variant==="emo"?(kind==="pet"?chats.emoPet:chats.emo):(chats[kind]||chats.normal)));
     function assetFor(state){
+      if(variant!=="orange") return variant;
       if(state==="typing") return "typing";
       if(state==="music") return "music";
       if(state==="angry"||state==="sad"||state==="dizzy"||state==="happy"||state==="love"||state==="sleep") return state;
@@ -84,11 +108,11 @@
     function updateImage(state="idle"){
       img.classList.toggle("typing-art",state==="typing");
       img.src=chrome.runtime.getURL(assets[assetFor(state)]||assets.orange);
-      img.onerror=()=>{img.onerror=null;img.src=chrome.runtime.getURL("cat-orange.png");};
+      img.onerror=()=>{img.onerror=null;img.src=chrome.runtime.getURL("assets/cats/cat-orange.png");};
     }
     function setMode(m){
       mode=m;pet.classList.remove("idle","walk","typing","happy","sad","angry","dizzy","sleep","drag");
-      pet.classList.add(m);
+      pet.classList.add(m);pet.classList.toggle("emo",variant==="emo");
       updateImage(m);
     }
     function place(){
@@ -112,10 +136,13 @@
       if(mode==="walk"&&!dragging&&!pet.classList.contains("is-typing")&&!audioPlaying){
         const dx=targetX-x,step=Math.sign(dx)*Math.min(Math.abs(dx),dt*.075);
         x+=step;y=innerHeight-64;place();
-        if(Math.abs(dx)<2){setMode("idle");nextWalk=now+1800+Math.random()*4200;if(Math.random()<.22)say(["just vibing ✨","meow!","nice website","hmm..."][Math.floor(Math.random()*4)]);
-          if(Math.random()<.07){setMode("sad");say("a little lonely... 🥺");setTimeout(()=>{if(mode==="sad")setMode("idle");},1700);}}
+        if(Math.abs(dx)<2){setMode("idle");nextWalk=now+1800+Math.random()*4200;if(Math.random()<.34)chat();
+          if(Math.random()<.07){setMode("sad");say(variant==="emo"?"left alone with my thoughts 🥀":"a little lonely... 🥺");setTimeout(()=>{if(mode==="sad")setMode("idle");},1700);}}
       }
       if(now>nextWalk&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&wanderEnabled&&!pet.classList.contains("is-typing")&&!audioPlaying)wander();
+      if(now>nextChatAt&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&!audioPlaying&&!pet.classList.contains("is-typing")){
+        chat();nextChatAt=now+22000+Math.random()*18000;
+      }
       requestAnimationFrame(loop);
     }
     let dragStartedAt=0, maxLift=0, gotAirborne=false, suppressNextClick=false;
@@ -195,18 +222,31 @@
       setTimeout(()=>{suppressNextClick=false;},180);
     }
     pet.addEventListener("pointerup",release);pet.addEventListener("pointercancel",release);
-    let clickTimes=[];
+    let clickTimes=[], angryUntil=0;
     pet.addEventListener("click",()=>{
       if(dragging||suppressNextClick)return;
       const now=performance.now();lastInteraction=now;sleeping=false;
-      clickTimes=clickTimes.filter(t=>now-t<1800);clickTimes.push(now);
+      // Keep the angry reaction active briefly; taps during it cannot restart the love counter.
+      if(now<angryUntil){
+        setMode("angry");
+        say(variant==="emo"?"i said i'm fine. 🖤":"HEY. I'M STILL ANGRY. 😾",1100);
+        return;
+      }
+      clickTimes=clickTimes.filter(t=>now-t<2200);
+      clickTimes.push(now);
       if(clickTimes.length>=3){
-        setMode("angry");say("STOP POKING ME!! 😾");
-        clearTimeout(pet.angerTimer);
-        pet.angerTimer=setTimeout(()=>{if(!dragging&&mode==="angry")setMode("idle");},2600);
         clickTimes=[];
+        angryUntil=now+2600;
+        setMode("angry");
+        say(variant==="emo"?"I SAID I AM FINE. 🖤":"STOP POKING ME!! 😾");
+        clearTimeout(pet.angerTimer);
+        pet.angerTimer=setTimeout(()=>{
+          if(!dragging&&mode==="angry")setMode("idle");
+          angryUntil=0;
+        },2600);
       } else {
-        setMode("love");say(clickTimes.length===1?"purrrrr ❤️":"MORE PETS PLEASE! 💕");
+        setMode("love");
+        say(variant==="emo"?pick(chats.emoPet):(clickTimes.length===1?pick(chats.pet):"MORE PETS PLEASE! 💕"));
         clearTimeout(pet.loveTimer);
         pet.loveTimer=setTimeout(()=>{if(!dragging&&mode==="love")setMode("idle");},1700);
       }
@@ -223,6 +263,7 @@
       clearTimeout(typingTimer);
       pet.classList.add("is-typing");
       if(mode!=="angry"&&mode!=="sad")setMode("typing");
+      if(variant==="emo")say(pick(["typing my feelings away...","dont look at my search history","writing another sad playlist"]),1700);
       // Preserve typing overlay after setMode (which resets classes).
       pet.classList.add("is-typing");
       typingTimer=setTimeout(()=>{pet.classList.remove("is-typing");if(!audioPlaying)setMode("idle");},1300);
@@ -244,7 +285,7 @@
     observer.observe(document.documentElement,{childList:true,subtree:true});
     chrome.storage.onChanged.addListener((changes,area)=>{
       if(area!=="local")return;
-      if(changes.variant){variant=changes.variant.newValue||"orange";pet.dataset.variant=variant;updateImage(mode);}
+      if(changes.variant){variant=changes.variant.newValue||"orange";pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");updateImage(mode);say(variant==="emo"?"welcome to the dark side 🥀":"new look! cute, right? ✨",2200);}
       if(changes.catName){catName=changes.catName.newValue||"Mochi";}
       if(changes.wanderEnabled){wanderEnabled=!!changes.wanderEnabled.newValue;}
       if(changes.petScale){petScale=Number(changes.petScale.newValue)||64;pet.style.width=petScale+"px";pet.style.height=petScale+"px";place();}
@@ -252,7 +293,7 @@
       if(changes.enabled&&changes.enabled.newValue===false)host.remove();
     });
     updateImage("idle");place();requestAnimationFrame(loop);
-    setTimeout(()=>say("hi! i'm "+catName+" 🐾",2400),900);
+    setTimeout(()=>say(variant==="emo"?"hi. i am "+catName+" 🖤":"hi! welcome, "+catName+" 🐾",2600),900);
     mediaCheck();
   }
 })();

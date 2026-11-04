@@ -1,10 +1,10 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="popup.css"></head>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="../src/popup.css"></head>
 <body>
 <main>
   <header><div class="logo">🐾</div><div><h1>Lil Companion</h1><p>Your tiny desktop-side friend</p></div><span class="live">● READY</span></header>
   <section class="preview-card">
-    <div class="preview-stage"><img id="preview" src="cat-orange.png" alt="Cat preview"><span id="preview-mood">♡</span></div>
+    <div class="preview-stage"><img id="preview" src="../assets/cats/cat-orange.png" alt="Cat preview"><span id="preview-mood">♡</span></div>
     <div class="preview-info"><b id="preview-name">Mochi</b><small id="preview-caption">Chilling and minding their business.</small></div>
     <div class="preview-actions">
       <button id="preview-idle" class="mood-btn active">Idle</button>
@@ -21,17 +21,21 @@
   <input id="catName" class="name-input" maxlength="18" placeholder="Name your cat">
   <section class="section-title"><b>Appearance</b><small>Choose a coat colour</small></section>
   <div class="variants">
-    <button class="variant" data-variant="orange"><span class="swatch orange">🐈</span><b>Ginger</b></button>
-    <button class="variant" data-variant="calico"><span class="swatch calico">🐈</span><b>Calico</b></button>
-    <button class="variant" data-variant="gray"><span class="swatch gray">🐈</span><b>Silver</b></button>
-    <button class="variant" data-variant="cream"><span class="swatch cream">🐈</span><b>Cream</b></button>
-    <button class="variant" data-variant="midnight"><span class="swatch midnight">🐈</span><b>Night</b></button>
+    <button class="variant active" data-variant="orange"><img src="../assets/cats/cat-orange.png" alt=""><b>Ginger</b></button>
+    <button class="variant" data-variant="street"><img src="../assets/cats/street.png" alt=""><b>Street</b></button>
+    <button class="variant" data-variant="cream"><img src="../assets/cats/cream.png" alt=""><b>Cream</b></button>
+    <button class="variant" data-variant="black"><img src="../assets/cats/black.png" alt=""><b>Black</b></button>
+    <button class="variant" data-variant="white"><img src="../assets/cats/white.png" alt=""><b>White</b></button>
   </div>
+  <section id="secret-section" class="secret-section" hidden>
+    <div><b>🖤 Secret unlocked: Emo Cat</b><small>For the nights that hit different.</small></div>
+    <button id="choose-emo" class="secret-button">Choose emo cat</button>
+  </section>
   <section class="section-title"><b>Speech bubbles</b><small>Adjust the cat's messages</small></section>
   <div class="setting-row"><div><b>Bubble size</b><small id="bubble-label">Normal · 1.0×</small></div><input id="bubbleSize" type="range" min="0.8" max="1.8" step="0.1" value="1"></div>
   <section class="section-title"><b>Behaviour</b><small>Make the companion feel right</small></section>
   <div class="setting-row"><div><b>Wander along the bottom</b><small>Walk around the page on its own</small></div><label class="switch"><input id="wander" type="checkbox"><span></span></label></div>
   <div class="setting-row"><div><b>Pet size</b><small id="size-label">Small · 64px</small></div><input id="size" type="range" min="48" max="92" value="64"></div>
   <p class="note">Tap the cat on a webpage to make them grumpy. Drag and release to toss them gently — they'll tumble, bounce and get dizzy if you lift them high.</p>
-  <footer>Changes apply to open pages after you refresh them.</footer>
-</main><script src="popup.js"></script></body></html>
+  <footer>Changes apply to open pages after you refresh them. <span class="easter-hint">psst… try a classic game code 👀</span></footer>
+</main><script src="../src/popup.js"></script></body></html>
