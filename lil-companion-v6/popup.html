@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="popup.css"></head>
+<body>
+<main>
+  <header><div class="logo">🐾</div><div><h1>Lil Companion</h1><p>Your tiny desktop-side friend</p></div><span class="live">● READY</span></header>
+  <section class="preview-card">
+    <div class="preview-stage"><img id="preview" src="cat-orange.png" alt="Cat preview"><span id="preview-mood">♡</span></div>
+    <div class="preview-info"><b id="preview-name">Mochi</b><small id="preview-caption">Chilling and minding their business.</small></div>
+    <div class="preview-actions">
+      <button id="preview-idle" class="mood-btn active">Idle</button>
+      <button id="preview-angry" class="mood-btn">Angry</button>
+      <button id="preview-sad" class="mood-btn">Sad</button>
+      <button id="preview-dizzy" class="mood-btn">Dizzy</button>
+      <button id="preview-typing" class="mood-btn">Typing</button>
+    </div>
+  </section>
+  <section class="toggle"><div><b>Show companion</b><small>Display your cat on websites</small></div><label class="switch"><input id="enabled" type="checkbox"><span></span></label></section>
+  <section class="section-title"><b>Meet your cat</b><small>Give them a name</small></section>
+  <input id="catName" class="name-input" maxlength="18" placeholder="Name your cat">
+  <section class="section-title"><b>Appearance</b><small>Choose a coat colour</small></section>
+  <div class="variants">
+    <button class="variant" data-variant="orange"><span class="swatch orange">🐈</span><b>Ginger</b></button>
+    <button class="variant" data-variant="calico"><span class="swatch calico">🐈</span><b>Calico</b></button>
+    <button class="variant" data-variant="gray"><span class="swatch gray">🐈</span><b>Silver</b></button>
+    <button class="variant" data-variant="cream"><span class="swatch cream">🐈</span><b>Cream</b></button>
+    <button class="variant" data-variant="midnight"><span class="swatch midnight">🐈</span><b>Night</b></button>
+  </div>
+  <section class="section-title"><b>Behaviour</b><small>Make the companion feel right</small></section>
+  <div class="setting-row"><div><b>Wander along the bottom</b><small>Walk around the page on its own</small></div><label class="switch"><input id="wander" type="checkbox"><span></span></label></div>
+  <div class="setting-row"><div><b>Pet size</b><small id="size-label">Small · 64px</small></div><input id="size" type="range" min="48" max="92" value="64"></div>
+  <p class="note">Tap the cat on a webpage to make them grumpy. Drag and release to toss them gently — they'll tumble, bounce and get dizzy if you lift them high.</p>
+  <footer>Changes apply to open pages after you refresh them.</footer>
+</main><script src="popup.js"></script></body></html>
