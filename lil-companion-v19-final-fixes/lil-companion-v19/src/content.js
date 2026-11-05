@@ -29,8 +29,8 @@
       @keyframes impactLine{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.15)}15%{opacity:1;transform:translate(-50%,-50%) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) scaleX(1.25)}}
 
       .pet{position:fixed;left:calc(100vw - 82px);top:calc(100vh - 82px);width:64px;height:64px;pointer-events:auto;cursor:grab;user-select:none;touch-action:none;filter:drop-shadow(0 4px 3px #0003)}
-      .sprite.typing-art{width:124px;height:101px;left:-23px;top:-18px;object-fit:contain}
       .pet.is-typing .sprite{animation:typeBob .22s ease-in-out infinite alternate}
+      .sprite.walking-art{width:138%;height:138%;left:-19%;top:-19%;object-fit:contain;image-rendering:pixelated}
       .pet:active{cursor:grabbing}
       .sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;transform-origin:50% 88%}\n      .pet[data-variant="calico"] .sprite{filter:hue-rotate(-8deg) saturate(.82) sepia(.18)}\n      .pet[data-variant="gray"] .sprite{filter:grayscale(1) brightness(1.18)}\n      .pet[data-variant="cream"] .sprite{filter:sepia(.38) saturate(.68) brightness(1.12)}\n      .pet[data-variant="midnight"] .sprite{filter:grayscale(1) brightness(.62) contrast(1.22)}
       .pet.idle .sprite{animation:breathe 2.6s ease-in-out infinite}
@@ -54,7 +54,8 @@
       @keyframes emoGlitch{0%{transform:translateX(-1px)}50%{transform:translateX(2px) skewX(2deg)}100%{transform:translateX(0)}}
       @keyframes emoDrag{to{transform:rotate(-8deg) translateY(-2px)}}
       .pet.drag .sprite{animation:dragWobble .2s ease-in-out infinite alternate}
-      .bubble{position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);padding:calc(7px * var(--bubble-scale,1)) calc(11px * var(--bubble-scale,1));border:2px solid #9c5a2d;border-radius:13px;background:#fff8e9;color:#3d291b;font:800 calc(12px * var(--bubble-scale,1))/1.25 system-ui,sans-serif;white-space:nowrap;max-width:260px;opacity:0;transition:opacity .16s;pointer-events:none;filter:drop-shadow(0 2px 2px #0002)}
+      .bubble{position:absolute;left:50%;right:auto;bottom:calc(100% + 8px);transform:translateX(-50%);box-sizing:border-box;display:block;padding:clamp(5px,calc(7px * var(--bubble-scale,1)),11px) clamp(8px,calc(11px * var(--bubble-scale,1)),16px);border:2px solid #9c5a2d;border-radius:13px;background:#fff8e9;color:#3d291b;font:800 clamp(11px,calc(12px * min(var(--bubble-scale,1),1.2)),14px)/1.25 system-ui,sans-serif;white-space:normal;width:max-content;min-width:0;max-width:min(240px,calc(100vw - 20px));overflow-wrap:break-word;word-break:normal;text-align:center;opacity:0;transition:opacity .16s;pointer-events:none;filter:drop-shadow(0 2px 2px #0002)}
+      .bubble{left:clamp(132px,50%,calc(100vw - 132px));}
       .bubble:before{content:"";position:absolute;left:calc(50% - 7px);bottom:-10px;border-width:9px 8px 0 8px;border-style:solid;border-color:#9c5a2d transparent transparent transparent}
       .bubble:after{content:"";position:absolute;left:calc(50% - 6px);bottom:-7px;border-width:7px 6px 0 6px;border-style:solid;border-color:#fff8e9 transparent transparent transparent}
       .bubble.show{opacity:1}
@@ -101,10 +102,10 @@
     impactLayer.className="impact-layer";
     root.appendChild(impactLayer);
     const img=pet.querySelector(".sprite"),bubble=pet.querySelector(".bubble");
-    const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png",emoIdle:"assets/cats/emo.png",emoDizzy:"assets/cats/emo-dizzy.png",emoMusic:"assets/cats/emo-music.png",emoTyping:"assets/cats/emo-typing.png",emoSad:"assets/cats/emo-sad.png",emoAngry:"assets/cats/emo-angry.png",emoSleep:"assets/cats/emo-sleep.png"};
+    const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png",orangeWalk:"assets/cats/orange-walk.webp",emoIdle:"assets/cats/emo.png",emoDizzy:"assets/cats/emo-dizzy.png",emoMusic:"assets/cats/emo-music.png",emoTyping:"assets/cats/emo-typing.png",emoSad:"assets/cats/emo-sad.png",emoAngry:"assets/cats/emo-angry.png",emoSleep:"assets/cats/emo-sleep.png"};
     let variant=initialVariant, x=Math.max(8,innerWidth-82), y=Math.max(8,innerHeight-64);
     let targetX=x, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
-    let lastThink=performance.now(), nextWalk=performance.now()+12000, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false;
+    let lastThink=performance.now(), nextWalk=performance.now()+12000, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, petScale=64, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false, sleepStartedAt=0;
     pet.style.setProperty("--bubble-scale",bubbleScale);
     pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");
     const chats={normal:["meow! 🐾","you got this!","need a tiny break?","i'm supervising 👀","this page is ours now","pspsps...","remember to stretch!","i believe in you ✨","one more tab? really?","tiny paws, big plans"],pet:["purrrrr ❤️","best human ever","again again!! 💕","that tickles!"],emo:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...","whatever.","i'm fine. (not really)","the void is calling 🖤","don't talk to me before my playlist","it's not a phase.","sad songs hit harder at 2am","brb staring out the window","everything is temporary. even this tab.","🖤 🥀 🖤"],emoPet:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...okay, that was kinda nice.","don't tell anyone i liked that.","🖤","you can stay, i guess."]};
@@ -128,8 +129,10 @@
       return variant;
     }
     function updateImage(state="idle"){
-      img.classList.toggle("typing-art",state==="typing");
-      img.src=chrome.runtime.getURL(assets[assetFor(state)]||assets.orange);
+      img.classList.remove("typing-art","walking-art");
+      const selectedAsset=(variant==="orange"&&state==="walk")?"orangeWalk":assetFor(state);
+      if(variant==="orange"&&state==="walk")img.classList.add("walking-art");
+      img.src=chrome.runtime.getURL(assets[selectedAsset]||assets.orange);
       img.onerror=()=>{img.onerror=null;img.src=chrome.runtime.getURL("assets/cats/cat-orange.png");};
     }
     function setMode(m){
@@ -156,7 +159,11 @@
     function loop(now){
       const dt=Math.min(40,now-lastThink);lastThink=now;
       if(mode==="idle"&&!sleeping&&!dragging&&!audioPlaying&&!pet.classList.contains("is-typing")&&now-lastInteraction>28000){
-        sleeping=true;setMode("sleep");say("Zzz... 💤",2600);
+        sleeping=true;sleepStartedAt=now;setMode("sleep");say("Zzz... 💤",2600);
+      }
+      if(sleeping&&now-sleepStartedAt>60000&&!dragging){
+        sleeping=false;lastInteraction=now;setMode("idle");say(variant==="emo"?"ugh... morning already? 🥀":"*yawns* i'm awake!",2200);
+        nextWalk=now+24000;
       }
       if(mode==="walk"&&!dragging&&!pet.classList.contains("is-typing")&&!audioPlaying){
         const dx=targetX-x,step=Math.sign(dx)*Math.min(Math.abs(dx),dt*.035);
@@ -174,7 +181,8 @@
     let previousPointer=null, releaseVX=0, releaseVY=0, physicsActive=false, dizzyTimer=null, pointerStart=null, didDrag=false;
     const floorY=()=>Math.max(0,innerHeight-petScale);
     pet.addEventListener("pointerdown",e=>{
-      lastInteraction=performance.now();sleeping=false;
+      lastInteraction=performance.now();
+      if(sleeping){sleeping=false;setMode("idle");}
       dragging=true;physicsActive=false;dragStartedAt=performance.now();maxLift=0;gotAirborne=false;didDrag=false;
       pointerStart={x:e.clientX,y:e.clientY};
       previousPointer={x:e.clientX,y:e.clientY,t:performance.now()};
@@ -296,7 +304,8 @@
     let clickTimes=[], angryUntil=0;
     pet.addEventListener("click",()=>{
       if(dragging||suppressNextClick)return;
-      const now=performance.now();lastInteraction=now;sleeping=false;
+      const now=performance.now();lastInteraction=now;
+      if(sleeping){sleeping=false;setMode("idle");}
       // Keep the angry reaction active briefly; taps during it cannot restart the love counter.
       if(now<angryUntil){
         setMode("angry");
@@ -323,8 +332,8 @@
       }
     });
     function onTyping(e){
-      lastInteraction=performance.now();sleeping=false;
-      if(mode==="sleep")setMode("idle");
+      if(sleeping||mode==="sleep")return;
+      lastInteraction=performance.now();
       if(e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
       const el=e.target;
       if(!el)return;

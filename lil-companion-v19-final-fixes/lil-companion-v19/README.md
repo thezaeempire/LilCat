@@ -29,7 +29,7 @@ lil-companion-v12/
 │   └── popup.css
 └── assets/
     ├── cats/
-    │   ├── cat-orange.png
+    │   ├── cat-orange.png\n│   ├── orange-walk.webp
     │   ├── street.png
     │   ├── cream.png
     │   ├── black.png
