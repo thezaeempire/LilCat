@@ -62,7 +62,12 @@
         "assets/cats/orange-typing.gif",
         "assets/cats/orange-idle.gif",
         "assets/cats/orange-dizzy.gif",
-        "assets/food/*"
+        "assets/food/*",
+        "assets/home/cat-house.png",
+        "assets/home/cat-house-occupied.png",
+        "assets/cats/orange-eating.webp",
+        "assets/cats/orange-music.webp",
+        "assets/cats/orange-crying.webp"
       ],
       "matches": [
         "<all_urls>"

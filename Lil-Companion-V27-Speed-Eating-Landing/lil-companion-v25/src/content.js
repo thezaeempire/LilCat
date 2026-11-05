@@ -7,10 +7,10 @@
   chrome.storage.local.get({...defaults, catName:"Mochi", wanderEnabled:true, petScale:88}, cfg => {
     if (Number(cfg.petScale)<=64) { cfg.petScale=88; chrome.storage.local.set({petScale:88}); }
     if (!cfg.enabled || document.getElementById("lil-companion-host")) return;
-    mount(cfg.variant || "orange", cfg.catName || "Mochi", cfg.bubbleScale || 1, !!cfg.followMouse);
+    mount(cfg.variant || "orange", cfg.catName || "Mochi", cfg.bubbleScale || 1, !!cfg.followMouse, Number(cfg.moveSpeed)||1);
   });
 
-  function mount(initialVariant, initialName, initialBubbleScale, initialFollowMouse=false) {
+  function mount(initialVariant, initialName, initialBubbleScale, initialFollowMouse=false, initialMoveSpeed=1) {
     const host=document.createElement("div");
     host.id="lil-companion-host";
     host.style.cssText="all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;";
@@ -29,10 +29,13 @@
       @keyframes impactPixel{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.25)}}
       @keyframes impactLine{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.15)}15%{opacity:1;transform:translate(-50%,-50%) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) scaleX(1.25)}}
 
-      .food-bowl{position:fixed;left:22px;bottom:8px;width:76px;height:58px;object-fit:contain;image-rendering:pixelated;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;filter:drop-shadow(0 3px 3px #0004);z-index:2147483646}
+      .food-bowl{position:fixed;left:22px;bottom:8px;width:54px;height:42px;object-fit:contain;image-rendering:pixelated;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;filter:drop-shadow(0 3px 3px #0004);z-index:2147483646}
+      .cat-house{position:fixed;right:18px;bottom:4px;width:150px;height:100px;object-fit:contain;image-rendering:pixelated;cursor:pointer;pointer-events:auto;user-select:none;z-index:2147483644;filter:drop-shadow(0 3px 3px #0004);transition:transform .16s ease}
+      .cat-house:hover{transform:translateY(-3px)}
       .food-bowl:active{cursor:grabbing}
       .pet{position:fixed;left:calc(100vw - 106px);top:calc(100vh - 106px);width:88px;height:88px;pointer-events:auto;cursor:grab;user-select:none;touch-action:none;filter:drop-shadow(0 4px 3px #0003)}
       .pet.is-typing .sprite{animation:typeBob .22s ease-in-out infinite alternate}
+      .pet.eating .sprite{animation:none!important;width:100%;height:100%;left:0;top:0;object-fit:contain;image-rendering:pixelated;transform:none!important;scale:1!important}
       .sprite.walking-art{width:138%;height:138%;left:-19%;top:-19%;object-fit:contain;image-rendering:pixelated}
       .pet:active{cursor:grabbing}
       .sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;transform-origin:50% 88%}\n      .pet[data-variant="calico"] .sprite{filter:hue-rotate(-8deg) saturate(.82) sepia(.18)}\n      .pet[data-variant="gray"] .sprite{filter:grayscale(1) brightness(1.18)}\n      .pet[data-variant="cream"] .sprite{filter:sepia(.38) saturate(.68) brightness(1.12)}\n      .pet[data-variant="midnight"] .sprite{filter:grayscale(1) brightness(.62) contrast(1.22)}
@@ -107,14 +110,20 @@
     foodBowl.alt="Cat food bowl";
     foodBowl.draggable=false;
     root.appendChild(foodBowl);
+    const catHouse=document.createElement("img");
+    catHouse.className="cat-house";
+    catHouse.src=chrome.runtime.getURL("assets/home/cat-house.png");
+    catHouse.alt="Cat house — click to let the cat go inside";
+    catHouse.draggable=false;
+    root.appendChild(catHouse);
     const impactLayer=document.createElement("div");
     impactLayer.className="impact-layer";
     root.appendChild(impactLayer);
     const img=pet.querySelector(".sprite"),bubble=pet.querySelector(".bubble");
-    const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png",orangeWalk:"assets/cats/orange-walk.webp",orangeIdle:"assets/cats/orange-idle.gif",orangeAngry:"assets/cats/orange-angry.gif",orangeHappy:"assets/cats/orange-happy.gif",orangeSleep:"assets/cats/orange-sleep.gif",orangeTyping:"assets/cats/orange-typing.gif",orangeDizzy:"assets/cats/orange-dizzy.gif",orangeMusic:"assets/cats/orange-music.webp",orangeSad:"assets/cats/orange-crying.gif",emoIdle:"assets/cats/emo.png",emoDizzy:"assets/cats/emo-dizzy.png",emoMusic:"assets/cats/emo-music.png",emoTyping:"assets/cats/emo-typing.png",emoSad:"assets/cats/emo-sad.png",emoAngry:"assets/cats/emo-angry.png",emoSleep:"assets/cats/emo-sleep.png"};
+    const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png",orangeWalk:"assets/cats/orange-walk.webp",orangeIdle:"assets/cats/orange-idle.gif",orangeAngry:"assets/cats/orange-angry.gif",orangeHappy:"assets/cats/orange-happy.gif",orangeSleep:"assets/cats/orange-sleep.gif",orangeTyping:"assets/cats/orange-typing.gif",orangeDizzy:"assets/cats/orange-dizzy.gif",orangeMusic:"assets/cats/orange-music.webp",orangeSad:"assets/cats/orange-crying.webp",orangeEating:"assets/cats/orange-eating.webp",emoIdle:"assets/cats/emo.png",emoDizzy:"assets/cats/emo-dizzy.png",emoMusic:"assets/cats/emo-music.png",emoTyping:"assets/cats/emo-typing.png",emoSad:"assets/cats/emo-sad.png",emoAngry:"assets/cats/emo-angry.png",emoSleep:"assets/cats/emo-sleep.png"};
     let variant=initialVariant, x=Math.max(8,innerWidth-82), y=Math.max(8,innerHeight-64);
     let targetX=x, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
-    let lastThink=performance.now(), nextWalk=performance.now()+6500+Math.random()*3500, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, followMouse=initialFollowMouse, mouseX=x+44, mouseY=y+44, petScale=88, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false, sleepStartedAt=0, hungry=false, goingToFood=false, eating=false, nextHungryAt=performance.now()+65000, foodX=22, foodY=innerHeight-58, bowlDragging=false, bowlPointerOffset={x:0,y:0};
+    let lastThink=performance.now(), nextWalk=performance.now()+6500+Math.random()*3500, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, followMouse=initialFollowMouse, mouseX=x+44, mouseY=y+44, petScale=88, moveSpeed=Math.max(.5,Math.min(2.5,Number(initialMoveSpeed)||1)), bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false, sleepStartedAt=0, hungry=false, goingToFood=false, eating=false, nextHungryAt=performance.now()+65000, foodX=22, foodY=innerHeight-58, bowlDragging=false, bowlPointerOffset={x:0,y:0}, insideHouse=false, randomMoodActive=false, randomMoodUntil=0, nextRandomMoodAt=performance.now()+14000+Math.random()*12000;
     pet.style.setProperty("--bubble-scale",bubbleScale);
     pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");
     const chats={normal:["meow! 🐾","you got this!","need a tiny break?","i'm supervising 👀","this page is ours now","pspsps...","remember to stretch!","i believe in you ✨","one more tab? really?","tiny paws, big plans"],pet:["purrrrr ❤️","best human ever","again again!! 💕","that tickles!"],emo:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...","whatever.","i'm fine. (not really)","the void is calling 🖤","don't talk to me before my playlist","it's not a phase.","sad songs hit harder at 2am","brb staring out the window","everything is temporary. even this tab.","🖤 🥀 🖤"],emoPet:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...okay, that was kinda nice.","don't tell anyone i liked that.","🖤","you can stay, i guess."]};
@@ -122,6 +131,7 @@
     const say=(t,ms=2400)=>{bubble.textContent=t;bubble.classList.add("show");requestAnimationFrame(place);clearTimeout(say.timer);say.timer=setTimeout(()=>bubble.classList.remove("show"),ms)};
     const chat=(kind="normal")=>say(pick(variant==="emo"?(kind==="pet"?chats.emoPet:chats.emo):(chats[kind]||chats.normal)));
     function assetFor(state){
+      if(state==="eating") return "orangeEating";
       if(variant==="emo"){
         if(state==="typing") return "emoTyping";
         if(state==="music") return "emoMusic";
@@ -150,7 +160,7 @@
       img.onerror=()=>{img.onerror=null;img.src=chrome.runtime.getURL("assets/cats/cat-orange.png");};
     }
     function setMode(m){
-      mode=m;pet.classList.remove("idle","walk","typing","happy","sad","angry","dizzy","sleep","drag");
+      mode=m;pet.classList.remove("idle","walk","typing","happy","sad","angry","dizzy","sleep","drag","eating");
       pet.classList.add(m);pet.classList.toggle("emo",variant==="emo");
       updateImage(m);
     }
@@ -180,7 +190,32 @@
       foodY=innerHeight-58;
       foodBowl.style.left=foodX+"px";foodBowl.style.top=foodY+"px";foodBowl.style.bottom="auto";
     }
+    function leaveHouse(){
+      if(!insideHouse)return;
+      insideHouse=false;
+      catHouse.src=chrome.runtime.getURL("assets/home/cat-house.png");
+      pet.style.display="";
+      x=Math.max(8,innerWidth-petScale-172);
+      y=floorY();targetX=x;targetY=y;
+      setMode("idle");place();
+      lastInteraction=performance.now();
+      nextWalk=lastInteraction+9000+Math.random()*5000;
+      say(variant==="emo"?"...i needed some air. 🥀":"I'm back! 🐾",2200);
+    }
+    catHouse.addEventListener("click",()=>{
+      if(insideHouse){leaveHouse();return;}
+      if(dragging||physicsActive)return;
+      insideHouse=true;
+      clearTimeout(foodEatTimer);
+      eating=false;goingToFood=false;hungry=false;foodBowl.style.display="";
+      physicsActive=false;releaseVX=0;releaseVY=0;angularVelocity=0;ragdollAngle=0;
+      pet.style.display="none";
+      bubble.classList.remove("show");
+      catHouse.src=chrome.runtime.getURL("assets/home/cat-house-occupied.png");
+      catHouse.alt="Cat is inside its house — click to let it out";
+    });
     function goToFood(){
+      if(insideHouse)leaveHouse();
       if(dragging||sleeping)return;
       hungry=true;goingToFood=true;eating=false;
       targetX=Math.max(0,Math.min(innerWidth-petScale,foodX+38-petScale/2));
@@ -213,14 +248,46 @@
     },{passive:true});
     function loop(now){
       const dt=Math.min(40,now-lastThink);lastThink=now;
-      if(mode==="idle"&&!sleeping&&!dragging&&!audioPlaying&&!pet.classList.contains("is-typing")&&now-lastInteraction>28000){
+      if(insideHouse){requestAnimationFrame(loop);return;}
+      // Keep the eating sprite visible for the full meal duration in BOTH
+      // normal wandering and mouse-follow modes. No movement/mood logic may
+      // replace the eating state until its 10-second timer completes.
+      if(eating){requestAnimationFrame(loop);return;}
+      // Random personality moments: one short emotion, followed by a full 30s cooldown.
+      if(randomMoodActive && now>=randomMoodUntil){
+        randomMoodActive=false;
+        if(!dragging&&!sleeping&&!audioPlaying&&!pet.classList.contains("is-typing"))setMode("idle");
+        nextRandomMoodAt=now+30000;
+      }
+      const canHaveRandomMood=!randomMoodActive && now>=nextRandomMoodAt &&
+        mode==="idle" && !dragging && !sleeping && !physicsActive && !goingToFood &&
+        !eating && !audioPlaying && !pet.classList.contains("is-typing") && !followMouse;
+      if(canHaveRandomMood){
+        const mood=pick(["happy","sad","angry","bored"]);
+        randomMoodActive=true;
+        const duration=mood==="sad"?5600:4600;
+        randomMoodUntil=now+duration;
+        if(mood==="bored"){
+          setMode("idle");
+          say(variant==="emo"?"bored. existing, as usual. 🥀":"hmm... kinda bored. entertain me? 🐾",duration);
+        }else{
+          setMode(mood);
+          const lines={
+            happy:variant==="emo"?"...okay. life is kinda nice. 🖤":"YIPPEE!! just felt happy! 💖",
+            sad:variant==="emo"?"the void is extra void today. 🥀":"aw... feeling a little sad. 🥺",
+            angry:variant==="emo"?"everything is annoying. 🖤":"WHO moved my nap spot?! 😾"
+          };
+          say(lines[mood],duration);
+        }
+      }
+      if(mode==="idle"&&!randomMoodActive&&!sleeping&&!dragging&&!audioPlaying&&!pet.classList.contains("is-typing")&&now-lastInteraction>28000){
         sleeping=true;sleepStartedAt=now;setMode("sleep");say("Zzz... 💤",2600);
       }
       if(sleeping&&now-sleepStartedAt>60000&&!dragging){
         sleeping=false;lastInteraction=now;setMode("idle");say(variant==="emo"?"ugh... morning already? 🥀":"*yawns* i'm awake!",2200);
         nextWalk=now+24000;
       }
-      if(followMouse&&!goingToFood&&!dragging&&!sleeping&&!audioPlaying&&!pet.classList.contains("is-typing")){
+      if(followMouse&&!goingToFood&&!eating&&!dragging&&!sleeping&&!audioPlaying&&!pet.classList.contains("is-typing")){
         // Mouse-follow is horizontal only: the cat stays planted on the page floor.
         targetX=Math.max(0,Math.min(innerWidth-petScale,mouseX-petScale/2));
         targetY=floorY();
@@ -231,28 +298,32 @@
           const nextFacing=dx>0?1:-1;
           if(facing!==nextFacing){facing=nextFacing;flip();}
           if(mode!=="walk")setMode("walk");
-          const step=Math.min(distance,dt*.075);
+          const step=Math.min(distance,dt*.075*moveSpeed);
           x+=Math.sign(dx)*step;
           place();
         } else if(mode==="walk"){setMode("idle");}
       } else if(mode==="walk"&&!dragging&&!pet.classList.contains("is-typing")&&!audioPlaying){
         const dx=targetX-x,dy=innerHeight-petScale-y;
-        const distance=Math.hypot(dx,dy),step=Math.min(distance,dt*.035);
+        const distance=Math.hypot(dx,dy),step=Math.min(distance,dt*.035*moveSpeed);
         if(distance>0.5){x+=dx/distance*step;y+=dy/distance*step;place();}
         if(distance<2){
           if(goingToFood){
-            goingToFood=false;eating=true;hungry=false;setMode("idle");say(variant==="emo"?"...fine. this is good. 🖤":"nom nom nom! 😋",4200);
-            clearTimeout(foodEatTimer);foodEatTimer=setTimeout(()=>{eating=false;nextWalk=performance.now()+8500+Math.random()*6000;},4300);
+            goingToFood=false;eating=true;hungry=false;foodBowl.style.display="none";setMode("eating");say(variant==="emo"?"...fine. this is good. 🖤":"nom nom nom! 😋",10000);
+            clearTimeout(foodEatTimer);foodEatTimer=setTimeout(()=>{
+              eating=false;foodBowl.style.display="";
+              if(!dragging&&!insideHouse){setMode("idle");say(variant==="emo"?"i have regained 2% energy. 🥀":"all done! that was delicious! 😸",2200);}
+              nextWalk=performance.now()+8500+Math.random()*6000;
+            },10000);
           } else {
             setMode("idle");nextWalk=now+8500+Math.random()*6500;if(Math.random()<.34)chat();
           }
         }
       }
-      if(now>=nextHungryAt&&!hungry&&!eating&&!sleeping&&!dragging&&mode==="idle"){
+      if(!randomMoodActive&&now>=nextHungryAt&&!hungry&&!eating&&!sleeping&&!dragging&&mode==="idle"){
         hungry=true;goToFood();nextHungryAt=now+85000+Math.random()*25000;
       }
-      if(now>nextWalk&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&wanderEnabled&&!followMouse&&!pet.classList.contains("is-typing")&&!audioPlaying&&!eating)wander();
-      if(now>nextChatAt&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&!audioPlaying&&!pet.classList.contains("is-typing")){
+      if(!randomMoodActive&&now>nextWalk&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&wanderEnabled&&!followMouse&&!pet.classList.contains("is-typing")&&!audioPlaying&&!eating)wander();
+      if(!randomMoodActive&&now>nextChatAt&&mode==="idle"&&!sleeping&&!dragging&&!physicsActive&&!audioPlaying&&!pet.classList.contains("is-typing")){
         chat();nextChatAt=now+22000+Math.random()*18000;
       }
       requestAnimationFrame(loop);
@@ -362,8 +433,16 @@
           } else {
             releaseVY=0;releaseVX=0;physicsActive=false;
             img.style.rotate="0deg";ragdollAngle=0;angularVelocity=0;
-            setMode("sad");say("that was a rough landing... 🥺",1700);
-            setTimeout(()=>{if(!dragging&&mode==="sad")setMode("idle");},1800);
+            setMode("dizzy");say("whoaaa... 😵",1000);
+            clearTimeout(pet.landingDizzyTimer);clearTimeout(pet.landingSadTimer);
+            pet.landingDizzyTimer=setTimeout(()=>{
+              if(!dragging&&!physicsActive&&!insideHouse){
+                setMode("sad");say(variant==="emo"?"...that hurt. 🥀":"that was a rough landing... 🥺",1800);
+                pet.landingSadTimer=setTimeout(()=>{
+                  if(!dragging&&!physicsActive&&!insideHouse&&mode==="sad")setMode("idle");
+                },1800);
+              }
+            },1000);
             return;
           }
         }
@@ -474,15 +553,17 @@
       }
       if(changes.moodAction&&changes.moodAction.newValue){
         const mood=changes.moodAction.newValue.mood;
+        randomMoodActive=false;nextRandomMoodAt=performance.now()+30000;
         if(["happy","angry","sad","dizzy","typing","music","sleep","idle"].includes(mood)){
           sleeping=mood==="sleep";if(sleeping)sleepStartedAt=performance.now();
           setMode(mood);say(({happy:"YAY!! 💖",angry:"HEY!! 😾",sad:"...oh.",dizzy:"whoa... 💫",typing:"tiny paws at work ⌨️",music:"vibing... 🎧",sleep:"Zzz... 💤",idle:"back to chilling."})[mood],2400);
           clearTimeout(pet.menuMoodTimer);
-          if(mood!=="sleep"&&mood!=="idle")pet.menuMoodTimer=setTimeout(()=>{if(!dragging&&mode===mood){setMode("idle");}},5000);
+          if(mood!=="sleep"&&mood!=="idle")pet.menuMoodTimer=setTimeout(()=>{if(!dragging&&mode===mood){setMode("idle");}},mood==="sad"?6500:5000);
         }
       }
       if(changes.petScale){petScale=Number(changes.petScale.newValue)||64;pet.style.width=petScale+"px";pet.style.height=petScale+"px";place();}
       if(changes.bubbleScale){bubbleScale=Number(changes.bubbleScale.newValue)||1;pet.style.setProperty("--bubble-scale",bubbleScale);}
+      if(changes.moveSpeed){moveSpeed=Math.max(.5,Math.min(2.5,Number(changes.moveSpeed.newValue)||1));}
       if(changes.enabled&&changes.enabled.newValue===false)host.remove();
     });
     updateImage("idle");place();requestAnimationFrame(loop);
