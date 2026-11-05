@@ -1,122 +1,113 @@
 # 🐾 Lil Companion
 
-Your little pixel-art buddy that lives in your browser!
-
-Lil Companion is a cute, interactive Chrome extension featuring an animated cat that wanders around webpages, reacts to your actions, listens along to music and has its own little personality.
+A tiny pixel-art cat that lives inside your browser. Lil Companion is an interactive browser pet that walks around webpages, reacts to user interactions, gets hungry and sleepy, and has its own little home.
 
 ## ✨ Features
 
-- 🐈 Animated cat with idle and walking animations.
-- ❤️ Different emotions and reactions.
-- 💤 Sleeps when bored and wakes when interacted with.
-- 🎧 Wears headphones when music plays.
-- ⌨️ Reacts to your typing.
-- 🖱️ Drag, throw and bounce with physics.
-- 🎨 Custom names, appearances and sizes.
-- 💬 Customizable speech bubbles.
+### 🐈 Cat Companion
+- Animated pixel-art cat that lives on your webpages.
+- Multiple expressions and moods, including happy, sad, angry, dizzy, sleeping, typing, and love.
+- Random personality moments with a cooldown.
+- Cat reacts when you type into text fields.
+- Drag, throw, and bounce physics.
+- Landing effects with soft dust and dirt particles.
+- The cat can walk into and out of its house.
 
-## 📥 Installation
+### 🏠 Cat House
+- A small house that stays visible on every browser tab.
+- Click the house to summon the cat into the currently active tab.
+- Click it again when the cat is already in that tab to send the cat inside.
+- The cat walks in from the left or right when summoned.
+- Draggable horizontally along the bottom of the webpage.
 
-No coding knowledge required!
+### 🍖 Food System
+- Interactive food bowl.
+- Click the bowl to call the cat over for food.
+- Eating animation plays for 10 seconds.
+- The bowl temporarily disappears while the cat is eating and returns afterwards.
+- Food bowl can be dragged horizontally along the bottom of the page.
 
-**1. Download the project**
-- Open this GitHub repository.
-- Click the green **Code** button.
-- Select **Download ZIP**.
+### 🌐 Multi-Tab Support
+- Only one active cat exists across browser tabs at a time.
+- The cat stays in the tab where it was last summoned.
+- The house and food bowl remain available across tabs.
+- Summoning the cat from another tab transfers its presence to that tab.
+- Helps avoid multiple cats running simultaneously and reduces unnecessary resource usage.
 
-**2. Extract the ZIP**
-- Right-click the downloaded file.
-- Select **Extract All**.
-- Open the extracted folder.
+### 🥚 Egg Hatch Intro
+- The cat can appear through an animated egg-hatching introduction.
+- The egg falls into the page, cracks open, and reveals the cat.
 
-**3. Open Chrome Extensions**
+### 📀 Cat DVD Screensaver
+- A secret animated DVD-style screensaver featuring the cat.
+- Activates after 5 minutes of inactivity.
+- Can also be activated using the Konami code:
 
-Visit:
+  `↑ ↑ ↓ ↓ ← → ← → B A`
 
-`chrome://extensions`
+- Can be enabled or disabled in the extension's Behaviour settings.
 
-**4. Enable Developer Mode**
-- Toggle Developer mode ON in the top-right corner.
+### 🎨 Lite Mode
+- Uses static PNG sprites instead of animated GIF/WebP cat expressions.
+- Includes different expressions for happy, angry, sad, dizzy, sleeping, typing, eating, and music states.
+- Reduces animated asset usage for lower-powered computers.
+- The cat can still move and interact with the webpage.
 
-**5. Install Lil Companion**
-- Click **Load unpacked**.
-- Select the extracted project folder containing `manifest.json`.
+### 🎵 Secret Emo Cat Mode
+- Special alternative cat mode with its own personality.
 
-**6. Pin the extension**
-- Click Chrome's puzzle-piece icon.
-- Find Lil Companion and click the pin icon.
+## ⚙️ Installation
 
-That's it! Your little buddy is ready. 🧡
+1. Download and extract the project ZIP.
+2. Open Google Chrome.
+3. Visit `chrome://extensions`.
+4. Enable **Developer mode**.
+5. Click **Load unpacked**.
+6. Select the `lil-companion-v25` folder containing `manifest.json`.
+7. Open or refresh a webpage to see your companion.
 
-## 🎮 How to Interact
+## 🛠️ Updating the Extension
 
-| Action | Reaction |
-|---|---|
-| Click once or twice | Shows love ❤️ |
-| Keep clicking | Gets angry 😾 |
-| Drag the cat | Pick it up |
-| Throw it upwards | Gets dizzy and bounces |
-| Leave it alone | Eventually falls asleep |
-| Play music | Puts on headphones 🎧 |
-| Start typing | Enters typing mode ⌨️ |
-
-## ⚙️ Customization
-
-Open the extension from your Chrome toolbar to:
-- Enable or disable the cat.
-- Change its name and appearance.
-- Adjust its size and speech bubble size.
-- Enable or disable automatic wandering.
-- Preview different expressions.
-
-## 💻 For Developers
-
-Want to modify or experiment with the extension?
-
-Clone the repository:
-
-```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-```
-
-Open the folder in VS Code, make your changes, then reload the extension from `chrome://extensions` and refresh your webpage.
+1. Replace the old project folder with the updated version.
+2. Open `chrome://extensions`.
+3. Find Lil Companion.
+4. Click **Reload**.
+5. Refresh your open webpages.
 
 ## 📁 Project Structure
 
 ```text
-lil-companion/
+lil-companion-v25/
 ├── manifest.json
-├── content.js
-├── pet.css
-├── popup.html
-├── popup.css
-├── popup.js
+├── popup/
+│   └── popup.html
+├── src/
+│   ├── background.js
+│   ├── content.js
+│   ├── pet.css
+│   ├── popup.js
+│   └── popup.css
 └── assets/
-    ├── cat-orange.png
-    ├── happy.png
-    ├── angry.png
-    ├── sad.png
-    ├── love.png
-    ├── dizzy.png
-    ├── sleep.png
-    ├── typing.png
-    └── headphones.png
+    ├── cats/
+    ├── lite/
+    ├── intro/
+    ├── screensaver/
+    ├── food/
+    ├── home/
+    ├── effects/
+    └── icons/
 ```
 
-## 🔒 Privacy
+## 💻 Development
 
-Lil Companion is designed to run locally in your browser. Its core functionality does not require an account or collect personal information.
+- Built as a Chrome Extension using Manifest V3.
+- JavaScript handles cat behaviour, interactions, and multi-tab coordination.
+- CSS handles the companion's appearance and positioning.
+- Image and animation assets are stored in the `assets/` directory.
+- After modifying the source files, reload the extension from `chrome://extensions` and refresh the webpage.
 
-## 🚀 Future Plans
+## ❤️ About
 
-- More cat breeds and animations.
-- Toys and interactive objects.
-- Food and hunger mechanics.
-- Multiple pets.
-- More personalities and behaviours.
+Lil Companion started as a simple pixel cat and gradually grew into an interactive browser companion with its own home, food system, animations, personality, and multi-tab behaviour.
 
-## ❤️ Support
-
-If you like Lil Companion, leave a ⭐ on this repository and share it with your friends!
-
-**Made with ❤️ for people who want a little companion while browsing.**
+**A little companion for every browsing session.** 🐾
