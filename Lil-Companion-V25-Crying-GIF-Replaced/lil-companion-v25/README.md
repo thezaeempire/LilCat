@@ -45,3 +45,10 @@ lil-companion-v12/
 
 ## Development
 Edit the files in `src/` or `assets/`, then reload the extension at `chrome://extensions` and refresh the webpage.
+
+### Orange cat animations
+The orange cat uses animated GIFs for idle, happy, angry, sleeping, typing and dizzy states. These are stored in `assets/cats/`.
+
+
+### Food bowl
+A draggable food bowl appears near the bottom of the page. Click it to call your cat over for a snack; the cat also gets hungry and visits it automatically from time to time.

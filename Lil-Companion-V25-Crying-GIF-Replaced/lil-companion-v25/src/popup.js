@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const enabled=$("enabled"),wander=$("wander"),nameInput=$("catName"),size=$("size"),bubbleSize=$("bubbleSize");
+const enabled=$("enabled"),wander=$("wander"),followMouse=$("followMouse"),nameInput=$("catName"),size=$("size"),bubbleSize=$("bubbleSize");
 const buttons=[...document.querySelectorAll(".variant")];
 const variantFiles={
  orange:"../assets/cats/cat-orange.png", street:"../assets/cats/street.png", cream:"../assets/cats/cream.png",
@@ -7,6 +7,7 @@ const variantFiles={
 };
 const moods={
  idle:["../assets/cats/cat-orange.png","♡","Just vibing."],
+ happy:["../assets/cats/happy.png","💖","Very happy!!"],
  angry:["../assets/cats/angry.png","💢","Not amused. Do not boop."],
  sad:["../assets/cats/sad.png","💧","A little emotional right now."],
  dizzy:["../assets/cats/dizzy.png","💫","The room is spinning!"],
@@ -18,7 +19,8 @@ let selectedVariant="orange", selectedMood="idle", emoUnlocked=false;
 function setPreview(mood){
  selectedMood=mood;
  const [src,icon,caption]=moods[mood];
- $("preview").src=selectedVariant==="emo" ? variantFiles.emo : (mood==="idle" ? variantFiles[selectedVariant] : src);
+ const emoMoods={idle:"../assets/cats/emo.png",happy:"../assets/cats/emo.png",angry:"../assets/cats/emo-angry.png",sad:"../assets/cats/emo-sad.png",dizzy:"../assets/cats/emo-dizzy.png",typing:"../assets/cats/emo-typing.png",music:"../assets/cats/emo-music.png",sleep:"../assets/cats/emo-sleep.png"};
+ $("preview").src=selectedVariant==="emo" ? emoMoods[mood] : (mood==="idle" ? variantFiles[selectedVariant] : src);
  $("preview-mood").textContent=selectedVariant==="emo"?"🖤":icon;
  $("preview-caption").textContent=selectedVariant==="emo"?"too tired to pretend.":caption;
  document.querySelectorAll(".mood-btn").forEach(b=>b.classList.toggle("active",b.id==="preview-"+mood));
@@ -30,11 +32,12 @@ function applyVariant(v){
  buttons.forEach(x=>x.classList.toggle("active",x.dataset.variant===v));
  setPreview(selectedMood);
 }
-chrome.storage.local.get({enabled:true,variant:"orange",catName:"Mochi",wanderEnabled:true,petScale:64,bubbleScale:1,emoUnlocked:false},s=>{
- enabled.checked=s.enabled;wander.checked=s.wanderEnabled;
- nameInput.value=s.catName;size.value=s.petScale;bubbleSize.value=s.bubbleScale;
+chrome.storage.local.get({enabled:true,variant:"orange",catName:"Mochi",wanderEnabled:true,followMouse:false,petScale:88,bubbleScale:1,emoUnlocked:false},s=>{
+ enabled.checked=s.enabled;wander.checked=s.wanderEnabled;followMouse.checked=!!s.followMouse;
+ nameInput.value=s.catName;size.value=(Number(s.petScale)<=64?88:s.petScale);bubbleSize.value=s.bubbleScale;
+ if(Number(s.petScale)<=64) chrome.storage.local.set({petScale:88});
  $("bubble-label").textContent=(s.bubbleScale<=1?"Normal":s.bubbleScale<1.5?"Large":"Extra large")+" · "+Number(s.bubbleScale).toFixed(1)+"×";
- $("size-label").textContent=(s.petScale<=60?"Tiny":s.petScale<=76?"Small":"Medium")+" · "+s.petScale+"px";
+ $("size-label").textContent=(size.value<=60?"Tiny":size.value<=76?"Small":"Medium")+" · "+size.value+"px";
  emoUnlocked=!!s.emoUnlocked;
  $("secret-section").hidden=!emoUnlocked;
  selectedVariant=s.variant;
@@ -61,7 +64,15 @@ size.addEventListener("input",()=>{
 });
 buttons.forEach(b=>b.addEventListener("click",()=>applyVariant(b.dataset.variant)));
 $("choose-emo").addEventListener("click",()=>applyVariant("emo"));
-document.querySelectorAll(".mood-btn").forEach(b=>b.addEventListener("click",()=>setPreview(b.id.replace("preview-",""))));
+document.querySelectorAll(".mood-btn").forEach(b=>b.addEventListener("click",()=>{
+ const mood=b.id.replace("preview-","");
+ setPreview(mood);
+ chrome.storage.local.set({moodAction:{mood,at:Date.now()}});
+}));
+followMouse.addEventListener("change",()=>{
+ chrome.storage.local.set({followMouse:followMouse.checked,wanderEnabled:followMouse.checked?false:wander.checked});
+ if(followMouse.checked)wander.checked=false;
+});
 
 // Konami code: ↑ ↑ ↓ ↓ ← → ← → B A
 const konami=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];

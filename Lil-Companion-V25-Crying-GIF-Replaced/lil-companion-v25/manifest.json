@@ -55,7 +55,14 @@
         "assets/cats/emo-sad.png",
         "assets/cats/emo-angry.png",
         "assets/cats/emo-sleep.png",
-        "assets/cats/orange-walk.webp"
+        "assets/cats/orange-walk.webp",
+        "assets/cats/orange-angry.gif",
+        "assets/cats/orange-happy.gif",
+        "assets/cats/orange-sleep.gif",
+        "assets/cats/orange-typing.gif",
+        "assets/cats/orange-idle.gif",
+        "assets/cats/orange-dizzy.gif",
+        "assets/food/*"
       ],
       "matches": [
         "<all_urls>"
