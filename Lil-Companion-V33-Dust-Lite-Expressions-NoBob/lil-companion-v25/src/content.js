@@ -7,10 +7,10 @@
   chrome.storage.local.get({...defaults, catName:"Mochi", wanderEnabled:true, petScale:88}, cfg => {
     if (Number(cfg.petScale)<=64) { cfg.petScale=88; chrome.storage.local.set({petScale:88}); }
     if (!cfg.enabled || document.getElementById("lil-companion-host")) return;
-    mount(cfg.variant || "orange", cfg.catName || "Mochi", cfg.bubbleScale || 1, !!cfg.followMouse, Number(cfg.moveSpeed)||1);
+    mount(cfg.variant==="emo"?"orange":(cfg.variant || "orange"), cfg.catName || "Mochi", cfg.bubbleScale || 1, !!cfg.followMouse, 2.5);
   });
 
-  function mount(initialVariant, initialName, initialBubbleScale, initialFollowMouse=false, initialMoveSpeed=1) {
+  function mount(initialVariant, initialName, initialBubbleScale, initialFollowMouse=false, initialMoveSpeed=2.5) {
     const host=document.createElement("div");
     host.id="lil-companion-host";
     host.style.cssText="all:initial;position:fixed;inset:0;z-index:2147483647;pointer-events:none;";
@@ -29,20 +29,29 @@
       @keyframes impactPixel{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.25)}}
       @keyframes impactLine{0%{opacity:0;transform:translate(-50%,-50%) scaleX(.15)}15%{opacity:1;transform:translate(-50%,-50%) scaleX(1)}100%{opacity:0;transform:translate(-50%,-50%) scaleX(1.25)}}
 
-      .food-bowl{position:fixed;left:22px;bottom:8px;width:54px;height:42px;object-fit:contain;image-rendering:pixelated;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;filter:drop-shadow(0 3px 3px #0004);z-index:2147483646}
-      .cat-house{position:fixed;right:18px;bottom:4px;width:150px;height:100px;object-fit:contain;image-rendering:pixelated;cursor:pointer;pointer-events:auto;user-select:none;z-index:2147483644;filter:drop-shadow(0 3px 3px #0004);transition:transform .16s ease}
-      .cat-house:hover{transform:translateY(-3px)}
+      .food-bowl{position:fixed;left:22px;bottom:8px;width:46px;height:36px;object-fit:contain;image-rendering:pixelated;cursor:grab;pointer-events:auto;touch-action:none;user-select:none;filter:drop-shadow(0 3px 3px #0004);z-index:2147483646}
+      .cat-house{position:fixed;right:18px;bottom:4px;width:130px;height:88px;object-fit:contain;image-rendering:pixelated;cursor:pointer;pointer-events:auto;user-select:none;z-index:2147483644;filter:drop-shadow(0 3px 3px #0004);transition:transform .16s ease}
+      .cat-house:hover{transform:none}
       .food-bowl:active{cursor:grabbing}
-      .pet{position:fixed;left:calc(100vw - 106px);top:calc(100vh - 106px);width:88px;height:88px;pointer-events:auto;cursor:grab;user-select:none;touch-action:none;filter:drop-shadow(0 4px 3px #0003)}
+      .pet{position:fixed;left:calc(100vw - 106px);top:calc(100vh - 106px);width:88px;height:88px;pointer-events:auto;cursor:grab;user-select:none;touch-action:none;z-index:2147483646;filter:drop-shadow(0 4px 3px #0003)}
       .pet.is-typing .sprite{animation:typeBob .22s ease-in-out infinite alternate}
-      .pet.eating .sprite{animation:none!important;width:100%;height:100%;left:0;top:0;object-fit:contain;image-rendering:pixelated;transform:none!important;scale:1!important}
-      .sprite.walking-art{width:138%;height:138%;left:-19%;top:-19%;object-fit:contain;image-rendering:pixelated}
+      .pet.eating .sprite{animation:none!important;width:100%;height:100%;left:0;top:0;object-fit:contain;object-position:center bottom;image-rendering:pixelated;transform:none!important;scale:1!important}
+      .sprite.walking-art{width:118%;height:118%;left:-9%;top:-18%;object-fit:contain;object-position:center bottom;image-rendering:pixelated}
       .pet:active{cursor:grabbing}
-      .sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;transform-origin:50% 88%}\n      .pet[data-variant="calico"] .sprite{filter:hue-rotate(-8deg) saturate(.82) sepia(.18)}\n      .pet[data-variant="gray"] .sprite{filter:grayscale(1) brightness(1.18)}\n      .pet[data-variant="cream"] .sprite{filter:sepia(.38) saturate(.68) brightness(1.12)}\n      .pet[data-variant="midnight"] .sprite{filter:grayscale(1) brightness(.62) contrast(1.22)}
-      .pet.idle .sprite{animation:breathe 2.6s ease-in-out infinite}
-      .pet.walk .sprite{animation:walk .32s ease-in-out infinite alternate}
+      .sprite{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;image-rendering:pixelated;pointer-events:none;transform-origin:50% 100%}\n      .pet[data-variant="calico"] .sprite{filter:hue-rotate(-8deg) saturate(.82) sepia(.18)}\n      .pet[data-variant="gray"] .sprite{filter:grayscale(1) brightness(1.18)}\n      .pet[data-variant="cream"] .sprite{filter:sepia(.38) saturate(.68) brightness(1.12)}\n      .pet[data-variant="midnight"] .sprite{filter:grayscale(1) brightness(.62) contrast(1.22)}
+      .pet.idle .sprite{animation:none!important}
+      .pet.walk .sprite{animation:none!important}
       .pet.typing .sprite{animation:typeBob .24s ease-in-out infinite alternate}
-      .pet.happy .sprite{animation:hop .42s ease-in-out 3}
+      .pet.happy .sprite{animation:none!important;transform:scale(1.10);transform-origin:center bottom}
+      .pet.idle,.pet.walk,.pet.happy{animation:none!important}
+      .pet .sprite{object-position:center bottom}
+      /* Dusty landing cloud: soft, earthy particles rather than bright grinder sparks. */
+      .impact.ground .pixel{border-radius:50%;box-shadow:none;filter:blur(.7px);opacity:.65}
+      .impact .dust-puff{position:absolute;left:0;top:0;display:block;width:var(--sz);height:var(--sz);border-radius:50%;background:var(--dust);opacity:0;filter:blur(2.5px);transform:translate(-50%,-50%);animation:dustPuff 850ms ease-out forwards}
+      @keyframes dustPuff{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}20%{opacity:.38}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.65)}}
+      /* Keep the regular cat planted; the supplied sprite animations provide the expression. */
+      .pet .sprite{animation:none!important}
+      .pet .keyboard{animation:none!important}
       .pet.sad .sprite{animation:sadBob 1.2s ease-in-out infinite}
       .pet.angry .sprite{animation:angryShake .13s linear infinite alternate}
       .pet.dizzy .sprite{animation:dizzy .7s ease-in-out infinite}
@@ -100,10 +109,94 @@
       @keyframes musicBob{to{transform:translateY(-5px) rotate(4deg)}}
     `;
     root.appendChild(css);
+    css.textContent += `
+      .cat-dvd-screen{position:fixed;inset:0;background:#050505;z-index:2147483647;display:none;pointer-events:auto;overflow:hidden;cursor:none}
+      .cat-dvd-screen.active{display:block}
+      .cat-dvd-screen img{position:absolute;width:clamp(110px,22vw,220px);height:auto;object-fit:contain;image-rendering:pixelated;left:0;top:0;pointer-events:none}
+      .egg-intro{position:fixed;inset:0;z-index:2147483646;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
+      .egg-intro img{width:clamp(112px,18vw,176px);height:auto;object-fit:contain;image-rendering:pixelated;animation:eggDrop .78s cubic-bezier(.22,.8,.25,1.15) both}
+      @keyframes eggDrop{0%{transform:translateY(-110vh) rotate(-12deg)}72%{transform:translateY(10px) rotate(4deg)}86%{transform:translateY(-5px) rotate(-2deg)}100%{transform:translateY(0) rotate(0)}}
+    `;
+    const dvdScreen=document.createElement("div");dvdScreen.className="cat-dvd-screen";
+    const dvdCat=document.createElement("img");dvdCat.src=chrome.runtime.getURL("assets/screensaver/dvd-cat.gif");dvdCat.alt="Lil Companion screensaver";
+    dvdScreen.appendChild(dvdCat);root.appendChild(dvdScreen);
+    let screensaverEnabled=true,lastActivity=Date.now(),dvdX=80,dvdY=80,dvdVX=2.5,dvdVY=1.9,dvdFrame=0;
+    function wakeScreensaver(){lastActivity=Date.now();dvdScreen.classList.remove("active");}
+    function startScreensaver(){if(!screensaverEnabled||insideHouse||dragging)return;dvdScreen.classList.add("active");}
+    function dvdLoop(){
+      if(dvdScreen.classList.contains("active")){
+        const w=dvdScreen.clientWidth,h=dvdScreen.clientHeight;
+        const r=dvdCat.getBoundingClientRect(),cw=r.width||180,ch=r.height||180;
+        dvdX+=dvdVX;dvdY+=dvdVY;
+        if(dvdX<=0||dvdX+cw>=w)dvdVX*=-1;
+        if(dvdY<=0||dvdY+ch>=h)dvdVY*=-1;
+        dvdX=Math.max(0,Math.min(w-cw,dvdX));dvdY=Math.max(0,Math.min(h-ch,dvdY));
+        dvdCat.style.left=dvdX+"px";dvdCat.style.top=dvdY+"px";
+      } else if(screensaverEnabled&&Date.now()-lastActivity>=300000){startScreensaver();}
+      requestAnimationFrame(dvdLoop);
+    }
+    const dvdKeys=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];let dvdKeyIndex=0;
+    const activity=()=>{if(dvdScreen.classList.contains("active"))wakeScreensaver();else lastActivity=Date.now();};
+    ["pointerdown","pointermove","keydown","wheel","touchstart"].forEach(ev=>document.addEventListener(ev,activity,{capture:true,passive:true}));
+    document.addEventListener("keydown",e=>{
+      const k=e.key.length===1?e.key.toLowerCase():e.key;
+      if(k===dvdKeys[dvdKeyIndex])dvdKeyIndex++;else dvdKeyIndex=(k===dvdKeys[0]?1:0);
+      if(dvdKeyIndex===dvdKeys.length){dvdKeyIndex=0;lastActivity=0;startScreensaver();}
+    },true);
+    dvdScreen.addEventListener("click",wakeScreensaver);
+    chrome.storage.local.get({screensaverEnabled:true},s=>{screensaverEnabled=!!s.screensaverEnabled;});
+    requestAnimationFrame(dvdLoop);
     const pet=document.createElement("div");
     pet.className="pet idle";
     pet.innerHTML=`<div class="bubble"></div><img class="sprite" draggable="false" alt="Pixel cat">`;
     root.appendChild(pet);
+    pet.style.display="none";
+    // One-time page-load hatch: egg drops into the centre, cracks, and reveals the kitten.
+    const eggIntro=document.createElement("div");eggIntro.className="egg-intro";eggIntro.style.display="none";
+    const eggImg=document.createElement("img");eggImg.src=chrome.runtime.getURL("assets/intro/egg-hatch.webp");eggImg.alt="A pixel egg hatching into the orange kitten";
+    eggIntro.appendChild(eggImg);root.appendChild(eggIntro);
+    pet.style.opacity="1";
+    let ownsCat=false;
+    function activateCat(showIntro=false){
+      ownsCat=true;insideHouse=false;foodBowl.style.display="";
+      catHouse.src=chrome.runtime.getURL("assets/home/cat-house.png");
+      catHouse.alt="Cat house — click to let the cat go inside";
+      pet.style.display="";
+      if(showIntro){
+        pet.style.opacity="0";eggIntro.style.display="flex";
+        const finishHatch=()=>{eggIntro.style.display="none";pet.style.opacity="1";};
+        eggImg.onanimationend=()=>setTimeout(finishHatch,520);
+        setTimeout(finishHatch,1900);
+      }else{
+        eggIntro.style.display="none";pet.style.opacity="1";
+        const fromLeft=Math.random()<.5;
+        x=fromLeft?-petScale:innerWidth+petScale;
+        y=floorY();targetX=Math.max(12,Math.min(innerWidth-petScale,innerWidth*.5-petScale*.5));
+        facing=fromLeft?1:-1;flip();place();setMode("walk");
+      }
+    }
+    function deactivateCat(){
+      ownsCat=false;insideHouse=false;
+      pet.style.display="none";eggIntro.style.display="none";
+      foodBowl.style.display="";
+      catHouse.src=chrome.runtime.getURL("assets/home/cat-house.png");
+      catHouse.alt="Click the house to call the cat to this tab";
+      bubble.classList.remove("show");
+    }
+    chrome.runtime.onMessage.addListener(message=>{
+      if(message?.type==="lil-cat-activate")activateCat(!!message.showIntro);
+      if(message?.type==="lil-cat-deactivate")deactivateCat();
+      if(message?.type==="lil-cat-try-claim"){
+        chrome.runtime.sendMessage({type:"lil-cat-register"},response=>{
+          if(!chrome.runtime.lastError&&response?.owner)activateCat(!!response.showIntro);
+        });
+      }
+    });
+    chrome.runtime.sendMessage({type:"lil-cat-register"},response=>{
+      if(chrome.runtime.lastError)return;
+      if(response?.owner)activateCat(!!response.showIntro);
+      else deactivateCat();
+    });
     const foodBowl=document.createElement("img");
     foodBowl.className="food-bowl";
     foodBowl.src=chrome.runtime.getURL("assets/food/cat-food-bowl.png");
@@ -121,9 +214,9 @@
     root.appendChild(impactLayer);
     const img=pet.querySelector(".sprite"),bubble=pet.querySelector(".bubble");
     const assets={orange:"assets/cats/cat-orange.png",street:"assets/cats/street.png",cream:"assets/cats/cream.png",black:"assets/cats/black.png",white:"assets/cats/white.png",emo:"assets/cats/emo.png",sad:"assets/cats/sad.png",angry:"assets/cats/angry.png",happy:"assets/cats/happy.png",love:"assets/cats/love.png",dizzy:"assets/cats/dizzy.png",typing:"assets/cats/typing.png",sleep:"assets/cats/sleep.png",music:"assets/cats/headphones.png",orangeWalk:"assets/cats/orange-walk.webp",orangeIdle:"assets/cats/orange-idle.gif",orangeAngry:"assets/cats/orange-angry.gif",orangeHappy:"assets/cats/orange-happy.gif",orangeSleep:"assets/cats/orange-sleep.gif",orangeTyping:"assets/cats/orange-typing.gif",orangeDizzy:"assets/cats/orange-dizzy.gif",orangeMusic:"assets/cats/orange-music.webp",orangeSad:"assets/cats/orange-crying.webp",orangeEating:"assets/cats/orange-eating.webp",emoIdle:"assets/cats/emo.png",emoDizzy:"assets/cats/emo-dizzy.png",emoMusic:"assets/cats/emo-music.png",emoTyping:"assets/cats/emo-typing.png",emoSad:"assets/cats/emo-sad.png",emoAngry:"assets/cats/emo-angry.png",emoSleep:"assets/cats/emo-sleep.png"};
-    let variant=initialVariant, x=Math.max(8,innerWidth-82), y=Math.max(8,innerHeight-64);
-    let targetX=x, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
-    let lastThink=performance.now(), nextWalk=performance.now()+6500+Math.random()*3500, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, followMouse=initialFollowMouse, mouseX=x+44, mouseY=y+44, petScale=88, moveSpeed=Math.max(.5,Math.min(2.5,Number(initialMoveSpeed)||1)), bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false, sleepStartedAt=0, hungry=false, goingToFood=false, eating=false, nextHungryAt=performance.now()+65000, foodX=22, foodY=innerHeight-58, bowlDragging=false, bowlPointerOffset={x:0,y:0}, insideHouse=false, randomMoodActive=false, randomMoodUntil=0, nextRandomMoodAt=performance.now()+14000+Math.random()*12000;
+    let liteMode=false, variant=(initialVariant==="emo"?"orange":initialVariant), x=Math.max(8,(innerWidth-88)/2), y=Math.max(8,innerHeight-88);
+    let targetX=x, targetY=innerHeight-88, mode="idle", dragging=false, offsetX=0, offsetY=0, typingTimer=0, audioPlaying=false;
+    let lastThink=performance.now(), nextWalk=performance.now()+6500+Math.random()*3500, nextChatAt=performance.now()+9000, facing=1, catName=initialName||"Mochi", wanderEnabled=true, followMouse=initialFollowMouse, mouseX=x+44, mouseY=y+44, petScale=88, moveSpeed=2.5, bubbleScale=Number(initialBubbleScale)||1, lastInteraction=performance.now(), sleeping=false, sleepStartedAt=0, hungry=false, goingToFood=false, eating=false, nextHungryAt=performance.now()+65000, foodX=22, foodY=innerHeight-58, bowlDragging=false, bowlPointerOffset={x:0,y:0}, insideHouse=false, randomMoodActive=false, randomMoodUntil=0, nextRandomMoodAt=performance.now()+14000+Math.random()*12000;
     pet.style.setProperty("--bubble-scale",bubbleScale);
     pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");
     const chats={normal:["meow! 🐾","you got this!","need a tiny break?","i'm supervising 👀","this page is ours now","pspsps...","remember to stretch!","i believe in you ✨","one more tab? really?","tiny paws, big plans"],pet:["purrrrr ❤️","best human ever","again again!! 💕","that tickles!"],emo:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...","whatever.","i'm fine. (not really)","the void is calling 🖤","don't talk to me before my playlist","it's not a phase.","sad songs hit harder at 2am","brb staring out the window","everything is temporary. even this tab.","🖤 🥀 🖤"],emoPet:["uh, meow ig","where da milk at?","hail dinga","milk is for cats","...okay, that was kinda nice.","don't tell anyone i liked that.","🖤","you can stay, i guess."]};
@@ -155,11 +248,29 @@
     function updateImage(state="idle"){
       img.classList.remove("typing-art","walking-art");
       const selectedAsset=(variant==="orange"&&state==="walk")?"orangeWalk":assetFor(state);
-      if(variant==="orange"&&state==="walk")img.classList.add("walking-art");
-      img.src=chrome.runtime.getURL(assets[selectedAsset]||assets.orange);
+      if(variant==="orange"&&state==="walk"&&!liteMode)img.classList.add("walking-art");
+      if(liteMode){
+        // Lite mode uses the original expressive PNG sprites, not one repeated face.
+        const liteSprites={
+          idle:"cat-orange.png",walk:"cat-orange.png",happy:"happy.png",love:"love.png",
+          angry:"angry.png",sad:"sad.png",dizzy:"dizzy.png",sleep:"sleep.png",
+          typing:"typing.png",music:"headphones.png",eating:"../lite/eating.png"
+        };
+        img.src=chrome.runtime.getURL("assets/cats/"+(liteSprites[state]||"cat-orange.png"));
+      }else{
+        img.src=chrome.runtime.getURL(assets[selectedAsset]||assets.orange);
+      }
       img.onerror=()=>{img.onerror=null;img.src=chrome.runtime.getURL("assets/cats/cat-orange.png");};
     }
     function setMode(m){
+      if(eating && m!=="eating"){
+        clearTimeout(foodEatTimer);
+        clearTimeout(say.timer);
+        bubble.classList.remove("show");
+        eating=false;
+        goingToFood=false;
+        foodBowl.style.display="";
+      }
       mode=m;pet.classList.remove("idle","walk","typing","happy","sad","angry","dizzy","sleep","drag","eating");
       pet.classList.add(m);pet.classList.toggle("emo",variant==="emo");
       updateImage(m);
@@ -186,10 +297,33 @@
       facing=targetX<x?-1:1;flip();setMode("walk");
     }
     function placeBowl(){
-      foodX=Math.max(4,Math.min(innerWidth-82,foodX));
-      foodY=innerHeight-58;
-      foodBowl.style.left=foodX+"px";foodBowl.style.top=foodY+"px";foodBowl.style.bottom="auto";
+      foodX=Math.max(4,Math.min(innerWidth-52,foodX));
+      foodY=innerHeight-36;
+      foodBowl.style.left=foodX+"px";foodBowl.style.top="auto";foodBowl.style.bottom="0px";
     }
+    // Keep the hut attached to the page bottom and allow horizontal dragging.
+    let houseX=Math.max(4,innerWidth-150), houseDragging=false, houseMoved=false, houseOffsetX=0, houseStartX=0;
+    function placeHouse(){
+      houseX=Math.max(0,Math.min(innerWidth-130,houseX));
+      catHouse.style.left=houseX+"px";catHouse.style.right="auto";
+      catHouse.style.top="auto";catHouse.style.bottom="0px";
+    }
+    catHouse.addEventListener("pointerdown",e=>{
+      houseDragging=true;houseMoved=false;houseStartX=e.clientX;
+      houseOffsetX=e.clientX-houseX;
+      catHouse.setPointerCapture(e.pointerId);e.preventDefault();
+    });
+    catHouse.addEventListener("pointermove",e=>{
+      if(!houseDragging)return;
+      if(Math.abs(e.clientX-houseStartX)>5)houseMoved=true;
+      houseX=e.clientX-houseOffsetX;placeHouse();
+    });
+    catHouse.addEventListener("pointerup",()=>{
+      houseDragging=false;
+      if(houseMoved){catHouse.dataset.justDragged="1";setTimeout(()=>delete catHouse.dataset.justDragged,180);}
+    });
+    catHouse.addEventListener("pointercancel",()=>{houseDragging=false;});
+    placeHouse();
     function leaveHouse(){
       if(!insideHouse)return;
       insideHouse=false;
@@ -200,13 +334,19 @@
       setMode("idle");place();
       lastInteraction=performance.now();
       nextWalk=lastInteraction+9000+Math.random()*5000;
-      say(variant==="emo"?"...i needed some air. 🥀":"I'm back! 🐾",2200);
+      say(pick(variant==="emo"?["...i needed some air. 🥀","the outside world is still disappointing.","i have returned. 🖤"]:["I'm back! 🐾","did you miss me?","what did i miss?","home is where the snacks are."]),2200);
     }
     catHouse.addEventListener("click",()=>{
+      if(catHouse.dataset.justDragged==="1")return;
+      if(!ownsCat){
+        chrome.runtime.sendMessage({type:"lil-cat-summon"});
+        return;
+      }
       if(insideHouse){leaveHouse();return;}
       if(dragging||physicsActive)return;
       insideHouse=true;
-      clearTimeout(foodEatTimer);
+      say(pick(["home sweet home. 🏠","do not disturb. zzz...","finally, some peace.","brb, cat things."]),2200);
+      clearTimeout(foodEatTimer);clearTimeout(say.timer);bubble.classList.remove("show");
       eating=false;goingToFood=false;hungry=false;foodBowl.style.display="";
       physicsActive=false;releaseVX=0;releaseVY=0;angularVelocity=0;ragdollAngle=0;
       pet.style.display="none";
@@ -218,7 +358,7 @@
       if(insideHouse)leaveHouse();
       if(dragging||sleeping)return;
       hungry=true;goingToFood=true;eating=false;
-      targetX=Math.max(0,Math.min(innerWidth-petScale,foodX+38-petScale/2));
+      targetX=Math.max(0,Math.min(innerWidth-petScale,foodX+23-petScale/2));
       targetY=floorY();
       facing=targetX<x?-1:1;flip();setMode("walk");
       say(variant==="emo"?"...is that food? 🥀":"food time!! 🍗",2200);
@@ -241,7 +381,7 @@
     });
     foodBowl.addEventListener("pointercancel",()=>{bowlDragging=false;bowlDragStart=null;});
     placeBowl();
-    window.addEventListener("resize",()=>{place();placeBowl();},{passive:true});
+    window.addEventListener("resize",()=>{place();placeBowl();placeHouse();},{passive:true});
     document.addEventListener("pointermove",e=>{
       if(!followMouse||dragging)return;
       mouseX=e.clientX;mouseY=e.clientY;
@@ -334,10 +474,10 @@
     pet.addEventListener("pointerdown",e=>{
       lastInteraction=performance.now();
       if(sleeping){sleeping=false;setMode("idle");}
-      goingToFood=false;eating=false;dragging=true;physicsActive=false;dragStartedAt=performance.now();maxLift=0;gotAirborne=false;didDrag=false;
+      goingToFood=false;dragging=true;physicsActive=false;dragStartedAt=performance.now();maxLift=0;gotAirborne=false;didDrag=false;
       pointerStart={x:e.clientX,y:e.clientY};
       previousPointer={x:e.clientX,y:e.clientY,t:performance.now()};
-      pet.setPointerCapture(e.pointerId);offsetX=e.clientX-x;offsetY=e.clientY-y;setMode("drag");
+      pet.setPointerCapture(e.pointerId);offsetX=e.clientX-x;offsetY=e.clientY-y;setMode("drag");foodBowl.style.display="";
     });
     pet.addEventListener("pointermove",e=>{
       if(!dragging)return;
@@ -367,27 +507,41 @@
       fx.style.setProperty("--ix",Math.round(cx)+"px");
       fx.style.setProperty("--iy",Math.round(cy)+"px");
       fx.style.setProperty("--wide",Math.round(42+strength*30)+"px");
-      const wallColors=["#fff0dc","#f5d9c5","#ffffff","#d9c4c0"];
-      const groundColors=["#f3e5d0","#e8d8c1","#d8c9b5","#fff0dc","#cbbda9","#e2d2bc"];
-      const colors=kind==="ground"?groundColors:wallColors;
-      const count=kind==="ground"?52:12;
+      const dirt=["#8b5a35","#a66b3f","#b77b4b","#c58a55","#d2a16c","#755039","#9b704e"];
+      const softWall=["#e7d8ca","#d7c7b9","#c8b8aa"];
+      const colors=kind==="ground"?dirt:softWall;
+      const count=kind==="ground"?44:9;
       for(let i=0;i<count;i++){
         const bit=document.createElement("i");
         bit.className="pixel";
-        const angle=kind==="ground"?(Math.PI+(Math.PI*Math.random())):(Math.random()*Math.PI*2);
-        const distance=(kind==="ground"?10:15)+Math.random()*(kind==="ground"?64:30)*strength;
+        const angle=kind==="ground"?(Math.PI*1.08+Math.random()*(Math.PI*.84)):(Math.random()*Math.PI*2);
+        const distance=(kind==="ground"?8:12)+Math.random()*(kind==="ground"?48:24)*strength;
         const dx=Math.cos(angle)*distance;
-        const dy=kind==="ground"?-Math.random()*(20+strength*24):Math.sin(angle)*distance;
+        const dy=kind==="ground"?-(3+Math.random()*(13+strength*9)):Math.sin(angle)*distance;
         bit.style.setProperty("--dx",Math.round(dx)+"px");
         bit.style.setProperty("--dy",Math.round(dy)+"px");
-        bit.style.setProperty("--sz",(kind==="ground"?(2+Math.round(Math.random()*3)):(3+Math.round(Math.random()*3)))+"px");
-        bit.style.setProperty("--dur",(kind==="ground"?850:440)+Math.round(Math.random()*420)+"ms");
+        bit.style.setProperty("--sz",(kind==="ground"?(4+Math.round(Math.random()*6)):(3+Math.round(Math.random()*3)))+"px");
+        bit.style.setProperty("--dur",(kind==="ground"?650:420)+Math.round(Math.random()*420)+"ms");
         bit.style.setProperty("--dust",colors[Math.floor(Math.random()*colors.length)]);
-        bit.style.animationDelay=(Math.random()*45)+"ms";
+        bit.style.opacity=kind==="ground"?(0.28+Math.random()*.48):"0.55";
+        bit.style.animationDelay=(Math.random()*65)+"ms";
         fx.appendChild(bit);
       }
+      if(kind==="ground"){
+        // A few soft, low dust puffs make the landing read as dirt, not sparks.
+        for(let i=0;i<4;i++){
+          const puff=document.createElement("i");
+          puff.className="dust-puff";
+          puff.style.setProperty("--dx",Math.round((Math.random()-.5)*52)+"px");
+          puff.style.setProperty("--dy",Math.round(-5-Math.random()*12)+"px");
+          puff.style.setProperty("--sz",Math.round(13+Math.random()*15)+"px");
+          puff.style.setProperty("--dust",dirt[Math.floor(Math.random()*dirt.length)]);
+          puff.style.animationDelay=(i*35)+"ms";
+          fx.appendChild(puff);
+        }
+      }
       impactLayer.appendChild(fx);
-      setTimeout(()=>fx.remove(),kind==="ground"?1800:850);
+      setTimeout(()=>fx.remove(),kind==="ground"?1500:850);
     }
     function startPhysics(){
       physicsActive=true;
@@ -493,14 +647,14 @@
       }
     });
     function onTyping(e){
-      if(sleeping||mode==="sleep")return;
-      lastInteraction=performance.now();
       if(e.isComposing||e.ctrlKey||e.metaKey||e.altKey)return;
       const el=e.target;
       if(!el)return;
       const tag=(el.tagName||"").toLowerCase();
       const editable=tag==="input"||tag==="textarea"||el.isContentEditable||el.getAttribute?.("role")==="textbox";
       if(!editable)return;
+      lastInteraction=performance.now();
+      if(sleeping||mode==="sleep"){sleeping=false;sleepStartedAt=0;setMode("idle");}
       const wasTyping=pet.classList.contains("is-typing");
       clearTimeout(typingTimer);
       pet.classList.add("is-typing");
@@ -541,10 +695,15 @@
     document.addEventListener("ended",mediaCheck,true);
     const observer=new MutationObserver(mediaCheck);
     observer.observe(document.documentElement,{childList:true,subtree:true});
+    chrome.storage.local.get({liteMode:false},settings=>{liteMode=!!settings.liteMode;updateImage(mode);});
     chrome.storage.onChanged.addListener((changes,area)=>{
       if(area!=="local")return;
       if(changes.variant){variant=changes.variant.newValue||"orange";pet.dataset.variant=variant;pet.classList.toggle("emo",variant==="emo");updateImage(mode);say(variant==="emo"?"welcome to the dark side 🥀":"new look! cute, right? ✨",2200);}
       if(changes.catName){catName=changes.catName.newValue||"Mochi";}
+      if(changes.liteMode){
+        liteMode=!!changes.liteMode.newValue;
+        updateImage(mode);
+      }
       if(changes.wanderEnabled){wanderEnabled=!!changes.wanderEnabled.newValue;}
       if(changes.followMouse){
         followMouse=!!changes.followMouse.newValue;
@@ -563,11 +722,13 @@
       }
       if(changes.petScale){petScale=Number(changes.petScale.newValue)||64;pet.style.width=petScale+"px";pet.style.height=petScale+"px";place();}
       if(changes.bubbleScale){bubbleScale=Number(changes.bubbleScale.newValue)||1;pet.style.setProperty("--bubble-scale",bubbleScale);}
-      if(changes.moveSpeed){moveSpeed=Math.max(.5,Math.min(2.5,Number(changes.moveSpeed.newValue)||1));}
+      // Walking speed is intentionally fixed at 2.5×; no per-user speed setting.
+      if(changes.screensaverEnabled){screensaverEnabled=!!changes.screensaverEnabled.newValue;if(!screensaverEnabled)dvdScreen.classList.remove("active");lastActivity=Date.now();}
+      if(changes.screensaverTrigger&&screensaverEnabled){lastActivity=0;startScreensaver();}
       if(changes.enabled&&changes.enabled.newValue===false)host.remove();
     });
     updateImage("idle");place();requestAnimationFrame(loop);
-    setTimeout(()=>say(variant==="emo"?"hi. i am "+catName+" 🖤":"hi! welcome, "+catName+" 🐾",2600),900);
+    setTimeout(()=>say(variant==="emo"?"I AM A CAR.":"I AM A CAR.",2600),900);
     mediaCheck();
   }
 })();

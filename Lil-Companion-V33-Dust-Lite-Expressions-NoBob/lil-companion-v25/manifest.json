@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Lil Companion \u2014 Pixel Pet",
-  "version": "12.0.0",
-  "description": "A tiny pixel cat companion with moods, chats and a secret emo mode.",
+  "version": "33.0.0",
+  "description": "A tiny pixel cat companion with a hatching intro and Cat DVD screensaver.",
   "permissions": [
     "storage"
   ],
@@ -67,7 +67,9 @@
         "assets/home/cat-house-occupied.png",
         "assets/cats/orange-eating.webp",
         "assets/cats/orange-music.webp",
-        "assets/cats/orange-crying.webp"
+        "assets/cats/orange-crying.webp",
+        "assets/screensaver/*",
+        "assets/intro/*"
       ],
       "matches": [
         "<all_urls>"
@@ -79,5 +81,8 @@
     "32": "assets/icons/icon32.png",
     "48": "assets/icons/icon48.png",
     "128": "assets/icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "src/background.js"
   }
 }

@@ -38,3 +38,22 @@ lil-companion-v25/
 
 ## Development
 Edit files in `src/` or `assets/`, then reload the extension at `chrome://extensions` and refresh the webpage.
+
+
+## New in this build
+- Drag the cat house and food bowl horizontally along the bottom edge of the page.
+- The cat renders above the house overlay.
+- The cat starts in the centre of the page when the extension loads.
+- The food bowl is smaller and sits against the bottom edge.
+- The Cat DVD screensaver uses the supplied animated rainbow cat: it starts after 5 minutes without activity, or with the Konami code (↑ ↑ ↓ ↓ ← → ← → B A).
+- Turn the Cat DVD screensaver on or off in the extension's Behaviour settings.
+
+
+### Lite mode
+Open the extension menu and enable **Lite mode** to use static PNG cat sprites instead of animated GIF/WebP assets. The cat still moves around the page, but animated sprite decoding and extra visual motion are reduced for lower-powered computers. Turn it off to restore the full animated experience.
+
+
+### V33 visual updates
+- Ground landings now use soft brown dirt particles and a low dust cloud instead of bright spark-like particles.
+- Lite mode uses the original static expression PNGs for happy, angry, sad, dizzy, sleeping, typing and music states.
+- Removed extra CSS bobbing/shaking so the regular cat stays planted; the supplied animated sprites still animate on their own.
