@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lil Companion \u2014 Pixel Pet",
-  "version": "33.0.0",
+  "version": "34.4.0",
   "description": "A tiny pixel cat companion with a hatching intro and Cat DVD screensaver.",
   "permissions": [
     "storage"
@@ -69,7 +69,11 @@
         "assets/cats/orange-music.webp",
         "assets/cats/orange-crying.webp",
         "assets/screensaver/*",
-        "assets/intro/*"
+        "assets/intro/*",
+        "assets/home/cat-house-sleeping.gif",
+        "assets/cats/orange-grooming.gif",
+        "assets/cats/orange-grooming.webp",
+        "assets/home/cat-house-sleeping.webp"
       ],
       "matches": [
         "<all_urls>"

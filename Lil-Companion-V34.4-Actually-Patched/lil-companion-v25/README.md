@@ -57,3 +57,22 @@ Open the extension menu and enable **Lite mode** to use static PNG cat sprites i
 - Ground landings now use soft brown dirt particles and a low dust cloud instead of bright spark-like particles.
 - Lite mode uses the original static expression PNGs for happy, angry, sad, dizzy, sleeping, typing and music states.
 - Removed extra CSS bobbing/shaking so the regular cat stays planted; the supplied animated sprites still animate on their own.
+
+
+### V34.1 updates
+- Transparent grooming animation after eating and occasionally at random.
+- Animated sleeping hut while the cat is inside.
+- Pick up and drop the hut; gravity returns it to the bottom while keeping it upright.
+- Dropping the occupied hut makes the cat tumble out dizzy.
+- Hut and bowl positions are remembered and synchronized across tabs.
+
+### V34.2 fixes
+- Grooming now uses cropped transparent animated WebP and is protected from idle-loop image resets; it plays after eating and can be interrupted by other cat states.
+- Random emotions now have a 15-second normal/idle cooldown after each emotion and a longer initial delay.
+- Increased the hut display size and cropped transparent margins from its sleeping animation.
+
+### V34.4 corrections
+- Corrected hut dimensions and floor collision bounds together.
+- Removed sad-state bobbing and cropped the eating animation to its visible pixels.
+- Grooming animation now remains active to completion and blocks conflicting idle/mood updates.
+- Eating begins only after checking the cat is actually aligned with the food bowl at floor level.
